@@ -1,0 +1,36 @@
+W:\School\CalicoMock\UIControls\bin\Debug\UIControls.dll
+W:\School\CalicoMock\UIControls\bin\Debug\UIControls.pdb
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.csprojResolveAssemblyReference.cache
+W:\School\CalicoMock\UIControls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls_MarkupCompile.cache
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls_MarkupCompile.lref
+W:\School\CalicoMock\UIControls\obj\Debug\Themes\Generic.baml
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.g.resources
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.Properties.Resources.resources
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.csproj.GenerateResource.Cache
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.dll
+W:\School\CalicoMock\UIControls\obj\Debug\UIControls.pdb
+D:\VS Projects\CalicoMock\UIControls\bin\Debug\UIControls.dll
+D:\VS Projects\CalicoMock\UIControls\bin\Debug\UIControls.pdb
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.csprojResolveAssemblyReference.cache
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls_MarkupCompile.cache
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls_MarkupCompile.lref
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\Themes\Generic.baml
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.g.resources
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.Properties.Resources.resources
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.csproj.GenerateResource.Cache
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.dll
+D:\VS Projects\CalicoMock\UIControls\obj\Debug\UIControls.pdb
+E:\Proyectos\CalicoCS\UIControls\bin\Debug\UIControls.dll
+E:\Proyectos\CalicoCS\UIControls\bin\Debug\UIControls.pdb
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls_MarkupCompile.cache
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls_MarkupCompile.lref
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\Themes\Generic.baml
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.g.resources
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.Properties.Resources.resources
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.csproj.GenerateResource.Cache
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.dll
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.pdb
+E:\Proyectos\CalicoCS\UIControls\obj\Debug\UIControls.csprojResolveAssemblyReference.cache

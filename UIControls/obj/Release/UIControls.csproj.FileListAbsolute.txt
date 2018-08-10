@@ -1,0 +1,11 @@
+E:\Proyectos\CalicoCS\UIControls\bin\Release\UIControls.dll
+E:\Proyectos\CalicoCS\UIControls\bin\Release\UIControls.pdb
+E:\Proyectos\CalicoCS\UIControls\obj\Release\GeneratedInternalTypeHelper.g.cs
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls_MarkupCompile.cache
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls_MarkupCompile.lref
+E:\Proyectos\CalicoCS\UIControls\obj\Release\Themes\Generic.baml
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls.g.resources
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls.Properties.Resources.resources
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls.csproj.GenerateResource.Cache
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls.dll
+E:\Proyectos\CalicoCS\UIControls\obj\Release\UIControls.pdb

@@ -1,0 +1,377 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:search="clr-namespace:UIControls;assembly=UIControls"
+        xmlns:controls="clr-namespace:MeetingBoard"
+        xmlns:properties="clr-namespace:MeetingBoard.Properties"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        mc:Ignorable="d" 
+        x:Class="MeetingBoard.View.MeetingBoardMain"
+        Title="MeetingBoard" Height="1024" Width="1280"
+        WindowState="Maximized" Closed="Window_Closed">
+    <Grid x:Name="MainGrid" Background="AliceBlue">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Background="AliceBlue">
+            <Button x:Name="cmdDetails" Click="cmdDetails_Click" ToolTip="Details" Height="40" Focusable="false" Margin="5" IsEnabled="False">
+                <Image Source="..\Images\Details.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
+            <Button x:Name="cmdNew" Click="cmdNew_Click" ToolTip="New" Focusable="false" Margin="5" IsEnabled="False">
+                <Image Source="..\Images\NewCanvas.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
+            <Button x:Name="cmdClone" Click="cmdClone_Click" ToolTip="Clone" Focusable="false" Margin="5" IsEnabled="False">
+                <Image Source="..\Images\CloneCanvas.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
+            <Button x:Name="cmdQuit" Click="cmdQuit_Click" ToolTip="Done Editing" Focusable="false" Margin="5" IsEnabled="False">
+                <Image Source="..\Images\Done.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
+            <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Toolbox">
+                <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </ToggleButton>
+        </WrapPanel>
+        <Grid Grid.Column="1" >
+            <TabControl x:Name="MainTabControl" SelectionChanged="TabControl_SelectionChanged">
+                <TabItem x:Name="TabGoals" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Goals | " Foreground="Blue" />
+                            <TextBlock Name="GoalsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="GoalsGrid" DataContext="" Background="AliceBlue">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+
+                            <!-- Sibling border to add shadow -->
+                        <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                            <Border.Effect>
+                                <DropShadowEffect Color="DarkGray"/>
+                            </Border.Effect>
+                        </Border>
+                        <InkCanvas x:Name="GoalsCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                    </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabEssence">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Essence | " Foreground="Blue" />
+                            <TextBlock Name="EssenceCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                      HorizontalScrollBarVisibility="Auto"
+			                      HorizontalAlignment="Stretch"
+			                      VerticalAlignment="Stretch">
+                        <Grid x:Name="EssenceGrid" DataContext="" Background="AliceBlue">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Sibling border to add shadow -->
+                        <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                            <Border.Effect>
+                                <DropShadowEffect Color="DarkGray"/>
+                            </Border.Effect>
+                        </Border>
+                        <InkCanvas x:Name="EssenceCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                    </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabConstraints">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Constraints | " Foreground="Blue" />
+                            <TextBlock Name="ConstraintsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="ConstraintsGrid" DataContext="" Background="AliceBlue">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Sibling border to add shadow -->
+                            <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="DarkGray"/>
+                                </Border.Effect>
+                            </Border>
+                            <InkCanvas x:Name="ConstraintsCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabAlternatives">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Alternatives | " Foreground="Blue" />
+                            <TextBlock Name="AlternativesCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="AlternativesGrid" DataContext="" Background="AliceBlue">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Sibling border to add shadow -->
+                            <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="DarkGray"/>
+                                </Border.Effect>
+                            </Border>
+                            <InkCanvas x:Name="AlternativesCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabAssumptions" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Assumptions | " Foreground="Blue" />
+                            <TextBlock Name="AssumptionsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="AssumptionsGrid" DataContext="" Background="AliceBlue">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Sibling border to add shadow -->
+                            <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="DarkGray"/>
+                                </Border.Effect>
+                            </Border>
+                            <InkCanvas x:Name="AssumptionsCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabImpDec" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Important Decisions | " Foreground="Blue" />
+                            <TextBlock Name="ImpDecCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="ImpDesGrid" DataContext="" Background="AliceBlue">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Sibling border to add shadow -->
+                            <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="DarkGray"/>
+                                </Border.Effect>
+                            </Border>
+                            <InkCanvas x:Name="ImpDecCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="TabActionItems" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Action Items | " Foreground="Blue" />
+                            <TextBlock Name="ActionItemsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+			                            HorizontalScrollBarVisibility="Auto"
+			                            HorizontalAlignment="Stretch"
+			                            VerticalAlignment="Stretch">
+                        <Grid x:Name="ActionItemsGrid" DataContext="" Background="AliceBlue">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Sibling border to add shadow -->
+                        <Border Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Center"
+					            VerticalAlignment="Center"
+                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+					            BorderBrush="DarkGray"
+					            BorderThickness="3">
+                            <Border.Effect>
+                                <DropShadowEffect Color="DarkGray"/>
+                            </Border.Effect>
+                        </Border>
+                        <InkCanvas x:Name="ActionItemsCanvas" 
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+					               SelectionChanged="inkCanvas_SelectionChanged" 
+					               StrokeCollected="inkCanvas_StrokeCollected" 
+					               StrokeErasing="inkCanvas_StrokeErasing"
+					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               HorizontalAlignment="Center"
+					               VerticalAlignment="Center"/>
+                    </Grid>
+                    </ScrollViewer>
+                </TabItem>                    
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>
