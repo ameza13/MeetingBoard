@@ -10,66 +10,124 @@
         x:Class="MeetingBoard.View.MeetingBoardMain"
         Title="MeetingBoard" Height="1024" Width="1280"
         WindowState="Maximized" Closed="Window_Closed">
-    <Grid x:Name="MainGrid" Background="AliceBlue">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Background="AliceBlue">
-            <Button x:Name="cmdDetails" Click="cmdDetails_Click" ToolTip="Details" Height="40" Focusable="false" Margin="5" IsEnabled="False">
-                <Image Source="..\Images\Details.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </Button>
-            <Button x:Name="cmdNew" Click="cmdNew_Click" ToolTip="New" Focusable="false" Margin="5" IsEnabled="False">
-                <Image Source="..\Images\NewCanvas.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </Button>
-            <Button x:Name="cmdClone" Click="cmdClone_Click" ToolTip="Clone" Focusable="false" Margin="5" IsEnabled="False">
-                <Image Source="..\Images\CloneCanvas.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </Button>
-            <Button x:Name="cmdQuit" Click="cmdQuit_Click" ToolTip="Done Editing" Focusable="false" Margin="5" IsEnabled="False">
-                <Image Source="..\Images\Done.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </Button>
-            <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Toolbox">
-                <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </ToggleButton>
-        </WrapPanel>
-        <Grid Grid.Column="1" >
-            <TabControl x:Name="MainTabControl" SelectionChanged="TabControl_SelectionChanged">
-                <TabItem x:Name="TabGoals" >
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Goals | " Foreground="Blue" />
-                            <TextBlock Name="GoalsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+    <Grid x:Name="MenuGrid" Background="WhiteSmoke">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Background="WhiteSmoke"  Grid.Row="0">
+            <Menu DockPanel.Dock="Top" >
+                <MenuItem Header="My Workspace" Foreground="DarkBlue" FontSize="16" >
+                    <MenuItem Name="miNew" Header="New" Click="New_Click" FontSize="14" />
+                    <MenuItem Name="miOpen" Header="Open" Click="Open_Click" FontSize="14" />
+                    <MenuItem Name="miClose" Header="Close" Click="Close_Click" FontSize="14"  IsEnabled="False"/>
+                    <Separator />
+                    <!--MenuItem Name="miSave" Header="Save" Click="Save_Click" FontSize="14"  IsEnabled="False" /-->
+                    <MenuItem Name="miSaveAll" Header="Save All" Click="SaveAll_Click" FontSize="14" IsEnabled="False"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Background="WhiteSmoke">
+                <!--Button x:Name="cmdDetails" Click="cmdDetails_Click" ToolTip="Details" Height="40" Focusable="false" Margin="5" IsEnabled="False">
+                    <Image Source="..\Images\Details.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </>
+                <Button x:Name="cmdQuit" Click="cmdQuit_Click" ToolTip="Done Editing" Focusable="false" Margin="5" IsEnabled="False">
+                    <Image Source="..\Images\Done.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button-->
+                <Button x:Name="cmdDraw" Click="cmdDraw_Click" Margin="5" ToolTip="Draw" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSPencil.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdSelect" Click="cmdSelect_Click" Margin="5" ToolTip="Select area" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSSelect.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdErase" Click="cmdErase_Click" Margin="5" ToolTip="Erase" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSErase.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdEraseStroke" Click="cmdEraseStroke_Click" Margin="5" ToolTip="Erase a stroke" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSEraseStroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdClearAll" Click="cmdClearAll_Click" Margin="5" ToolTip="Erase all" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSEraseStroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdUndo" Click="cmdUndo_Click" Margin="5" ToolTip="Undo" Background="WhiteSmoke">
+                    <Image Source="..\Images\Undo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdRedo" Click="cmdRedo_Click" Margin="5" ToolTip="Redo" Background="WhiteSmoke">
+                    <Image Source="..\Images\Redo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Button>
+                <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Pen Settings" Background="WhiteSmoke">
+                    <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </ToggleButton>
+            </WrapPanel>
+            <Grid Grid.Column="1" >
+                <TabControl x:Name="MainTabControl" SelectionChanged="TabControl_SelectionChanged" FontSize="18" Margin="5">
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TabItem">
+                                        <Border Name="Border" BorderThickness="2,2,2,1" BorderBrush="Gainsboro" CornerRadius="6,6,0,0" Margin="2,0">
+                                            <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="AliceBlue" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="WhiteSmoke" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabItem x:Name="TabGoals">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Goals " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Name="GoalsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="GoalsGrid" DataContext="" Background="AliceBlue">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="25"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="25"/>
-                        </Grid.ColumnDefinitions>
+                            <Grid x:Name="GoalsGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Sibling border to add shadow -->
-                        <Border Grid.Row="1" Grid.Column="1" 
+                                <!-- Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                            <Border.Effect>
-                                <DropShadowEffect Color="DarkGray"/>
-                            </Border.Effect>
-                        </Border>
-                        <InkCanvas x:Name="GoalsCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+
+                                <InkCanvas x:Name="GoalsCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -77,47 +135,50 @@
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"      
+                                   MouseUp="GoalsCanvas_MouseUp"
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                    </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabEssence">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Essence | " Foreground="Blue" />
-                            <TextBlock Name="EssenceCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblGoals" Margin="50" Content="What do we want to accomplish in today's design meeting?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem x:Name="TabEssence">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Essence " Foreground="DarkBlue" FontWeight="Bold" />
+                                <TextBlock Name="EssenceCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                      HorizontalScrollBarVisibility="Auto"
 			                      HorizontalAlignment="Stretch"
 			                      VerticalAlignment="Stretch">
-                        <Grid x:Name="EssenceGrid" DataContext="" Background="AliceBlue">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="25"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="25"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- Sibling border to add shadow -->
-                        <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="EssenceGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                            <Border.Effect>
-                                <DropShadowEffect Color="DarkGray"/>
-                            </Border.Effect>
-                        </Border>
-                        <InkCanvas x:Name="EssenceCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="EssenceCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -125,47 +186,50 @@
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"     
+                                   MouseUp ="EssenceCanvas_MouseUp"
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                    </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabConstraints">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Constraints | " Foreground="Blue" />
-                            <TextBlock Name="ConstraintsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblEssence" Margin="50" Content="What is the most important/most challenging part of the design problem for us to get right?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem x:Name="TabConstraints">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Constraints " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Name="ConstraintsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="ConstraintsGrid" DataContext="" Background="AliceBlue">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="25"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="25"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <!-- Sibling border to add shadow -->
-                            <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="ConstraintsGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="DarkGray"/>
-                                </Border.Effect>
-                            </Border>
-                            <InkCanvas x:Name="ConstraintsCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="ConstraintsCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -173,47 +237,50 @@
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"  
+                                   MouseUp="ConstraintsCanvas_MouseUp"
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabAlternatives">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Alternatives | " Foreground="Blue" />
-                            <TextBlock Name="AlternativesCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblConstraints" Margin="50" Content=" What factors, technological or otherwise, limit the choices we can make?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem x:Name="TabAssumptions" >
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Assumptions " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Name="AssumptionsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="AlternativesGrid" DataContext="" Background="AliceBlue">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="25"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="25"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <!-- Sibling border to add shadow -->
-                            <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="AssumptionsGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="DarkGray"/>
-                                </Border.Effect>
-                            </Border>
-                            <InkCanvas x:Name="AlternativesCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="AssumptionsCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -221,47 +288,50 @@
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"    
+                                   MouseUp="AssumptionsCanvas_MouseUp"
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabAssumptions" >
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Assumptions | " Foreground="Blue" />
-                            <TextBlock Name="AssumptionsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblAssumptions" Margin="50" Content=" What aspects of our design rest on a belief that, if false, would pose a serious problem?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem x:Name="TabAlternatives">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Alternatives " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Name="AlternativesCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="AssumptionsGrid" DataContext="" Background="AliceBlue">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="25"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="25"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <!-- Sibling border to add shadow -->
-                            <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="AlternativesGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="DarkGray"/>
-                                </Border.Effect>
-                            </Border>
-                            <InkCanvas x:Name="AssumptionsCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="AlternativesCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -269,95 +339,100 @@
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"
+                                   MouseUp="AlternativesCanvas_MouseUp"
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabImpDec" >
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Important Decisions | " Foreground="Blue" />
-                            <TextBlock Name="ImpDecCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblAlternatives" Margin="50" Content="What are different ways of solving the design problem?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem x:Name="TabImpDec" >
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Decisions " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Name="ImpDecCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="ImpDesGrid" DataContext="" Background="AliceBlue">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="25"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="25"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <!-- Sibling border to add shadow -->
-                            <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="ImpDesGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <!--Sibling border to add shadow -->
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="DarkGray"/>
-                                </Border.Effect>
-                            </Border>
-                            <InkCanvas x:Name="ImpDecCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="ImpDecCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                   Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
+                                   Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                         
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
-					               SelectionMoved="inkCanvas_SelectionMoved"                                 
+					               SelectionMoved="inkCanvas_SelectionMoved"     
+                                   MouseUp="ImpDecCanvas_MouseUp"        
 					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center"/>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="TabActionItems" >
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Action Items | " Foreground="Blue" />
-                            <TextBlock Name="ActionItemsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+					               VerticalAlignment="Center">
+                                    <Label x:Name="lblImpDec" Margin="50" Content=" What are the key choices that we made?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+                                </InkCanvas> 
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <!--TabItem x:Name="TabActionItems" >
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Action Items | " Foreground="Blue" />
+                                <TextBlock Name="ActionItemsCurrentElapsedTimeDisplay" Text="00:00:00" Foreground="Blue"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
 			                            HorizontalScrollBarVisibility="Auto"
 			                            HorizontalAlignment="Stretch"
 			                            VerticalAlignment="Stretch">
-                        <Grid x:Name="ActionItemsGrid" DataContext="" Background="AliceBlue">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="25"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="25"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="25"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- Sibling border to add shadow -->
-                        <Border Grid.Row="1" Grid.Column="1" 
+                            <Grid x:Name="ActionItemsGrid" DataContext="" Background="WhiteSmoke">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Row="1" Grid.Column="1" 
 					            HorizontalAlignment="Center"
 					            VerticalAlignment="Center"
                                 Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
 					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
-                            <Border.Effect>
-                                <DropShadowEffect Color="DarkGray"/>
-                            </Border.Effect>
-                        </Border>
-                        <InkCanvas x:Name="ActionItemsCanvas" 
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="DarkGray"/>
+                                    </Border.Effect>
+                                </Border>
+                                <InkCanvas x:Name="ActionItemsCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
 					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
@@ -368,10 +443,11 @@
 					               SelectionMoved="inkCanvas_SelectionMoved"                                 
 					               HorizontalAlignment="Center"
 					               VerticalAlignment="Center"/>
-                    </Grid>
-                    </ScrollViewer>
-                </TabItem>                    
-            </TabControl>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem-->
+                </TabControl>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

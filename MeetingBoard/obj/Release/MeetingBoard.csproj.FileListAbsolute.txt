@@ -19,3 +19,5 @@ E:\Proyectos\MeetingBoard\MeetingBoard\obj\Release\MeetingBoard.Properties.Resou
 E:\Proyectos\MeetingBoard\MeetingBoard\obj\Release\MeetingBoard.csproj.GenerateResource.Cache
 E:\Proyectos\MeetingBoard\MeetingBoard\obj\Release\MeetingBoard.exe
 E:\Proyectos\MeetingBoard\MeetingBoard\obj\Release\MeetingBoard.pdb
+E:\Proyectos\MeetingBoard\MeetingBoard\bin\Release\WPF.MDI.dll
+E:\Proyectos\MeetingBoard\MeetingBoard\obj\Release\MeetingBoard.csprojResolveAssemblyReference.cache

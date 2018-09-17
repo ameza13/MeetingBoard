@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -13,6 +15,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.Windows.Ink;
+using MeetingBoard.Model;
+using MeetingBoard.Utils;
 
 namespace MeetingBoard.View
 {
@@ -22,6 +27,7 @@ namespace MeetingBoard.View
     public partial class MeetingBoardMain : Window
     {
         ToolBox toolbox;
+        Workspace ws;
 
         //StopWatches
         DispatcherTimer dtGoals = new DispatcherTimer();
@@ -31,6 +37,7 @@ namespace MeetingBoard.View
         DispatcherTimer dtAssumptions = new DispatcherTimer();
         DispatcherTimer dtImpDec = new DispatcherTimer();
         DispatcherTimer dtActItems = new DispatcherTimer();
+        DispatcherTimer dtActive;
 
         Stopwatch swGoals = new Stopwatch();
         Stopwatch swEssence = new Stopwatch();
@@ -39,17 +46,168 @@ namespace MeetingBoard.View
         Stopwatch swAssumptions = new Stopwatch();
         Stopwatch swImpDec = new Stopwatch();
         Stopwatch swActItems = new Stopwatch();
-        string currentTime = string.Empty;
+        Stopwatch swActive;
 
         InkCanvas _activeCanvas;
+        
+        DrawingAttributes _penSettings = new DrawingAttributes();
+        DrawingAttributes _highlighterSettings = new DrawingAttributes();
 
         public MeetingBoardMain()
         {
             InitializeComponent();
             toolbox = new ToolBox(this);
+            ws = new Workspace();
+
+            _activeCanvas = GoalsCanvas;
             SetUpStopWatches();
-            //TO DO: Init Goals as default active canvas
+            _initDrawingAttributes();
         }
+
+        private void _initDrawingAttributes()
+        {
+            _penSettings = _activeCanvas.DefaultDrawingAttributes;
+            /*_highlighterSettings.IsHighlighter = true;
+            _highlighterSettings.Height = 10;
+            _highlighterSettings.Width = 10;
+            _highlighterSettings.Color = Colors.Yellow;*/
+        }
+        private void ClearAllCanvas()
+        {
+            GoalsCanvas.Strokes.Clear();
+            EssenceCanvas.Strokes.Clear();
+            ConstraintsCanvas.Strokes.Clear();
+            AlternativesCanvas.Strokes.Clear();
+            AssumptionsCanvas.Strokes.Clear();
+            ImpDecCanvas.Strokes.Clear();
+            //ActionItemsCanvas.Strokes.Clear();
+        }
+        private void SetUpMainGrid(int MenuOption)
+        {
+            /* 
+             * 1 If 'New Workspace'
+             *  1- Save unsaved work
+             *  2- Clear tabs
+             *  3- Clear workspace model     
+             *  4- Configure other menu options
+             * 2 If 'open workspace'
+             *  1- If another workspace is open, call 'close'
+             *  2- Call open workspace
+             *  3- Configure other menu options
+             * 4 If save 'all workspace'
+             *  1- If a workspace is open, call 'Save All'
+             *  2- Configure other menu options
+             * 3 If save 'active tab'
+             *  1- If the worspace is saved, call 'Save active canvas'
+             *  2- In not, ...
+             *  2- Configure other menu options
+             * 5 If 'close workspace'
+             *  1- Save unsaved work
+             *  2- clear tabs
+             *  3- clear workspace model
+             *  4- Hide MainGrid
+             *  5- Configure other menu options
+             */
+
+            //TO DO: watches control
+            switch (MenuOption) //TO REFACTOR: Change case numbers for constants
+            {
+                case 1: //New Workspace
+                    StopAllWatches();                
+                    ws.ResetWorkspace(); //Reset timing?
+                    ClearAllCanvas();
+                    if(SaveWorkspace()) 
+                    {
+                        lblGoals.Visibility = Visibility.Visible;
+                        lblEssence.Visibility = Visibility.Visible;
+                        lblAssumptions.Visibility = Visibility.Visible;
+                        lblConstraints.Visibility = Visibility.Visible;
+                        lblAlternatives.Visibility = Visibility.Visible;
+                        lblImpDec.Visibility = Visibility.Visible;
+                                              
+                        MainGrid.Visibility = Visibility.Visible;
+                        ResetAllWatches();
+
+                        //Select default tab
+                        MainTabControl.SelectedIndex = TabGoals.TabIndex;
+                        MainTabControl.SelectedItem = TabGoals;
+                        TabGoals.IsSelected = true;
+
+                        //Restart watch
+                        StartWatch(dtGoals, swGoals);
+
+                        //Set Options menu
+                        miClose.IsEnabled = true;
+                        //miSave.IsEnabled = true;
+                        miSaveAll.IsEnabled = true;
+                    }
+                    break;
+                case 2://Open Workspace
+                    StopAllWatches();
+                    //ClearAllCanvas();
+                    if (OpenWorkspace())
+                    {
+                        ResetAllWatches();
+                        MainGrid.Visibility = Visibility.Visible;
+
+                        //Select default tab
+                        MainTabControl.SelectedIndex = TabGoals.TabIndex;
+                        MainTabControl.SelectedItem = TabGoals;
+                        TabGoals.IsSelected = true;
+
+                        //Restart watch
+                        StartWatch(dtGoals, swGoals);
+
+                        miClose.IsEnabled = true;
+                        //miSave.IsEnabled = true;
+                        miSaveAll.IsEnabled = true;
+                    }                   
+                    break;
+                case 3: //Save
+                    //TO DO: Save active tab only
+                    break;
+                case 4: //save 'all workspace'
+                    StopAllWatches();
+                    if (SaveWorkspace())
+                    {
+                        
+                    }
+                    //Restart watch
+                    StartWatch(dtActive, swActive);
+                    break;
+                case 5:
+                    StopAllWatches();
+                    ResetAllWatches();
+                    ws.ResetWorkspace();
+                    ClearAllCanvas();
+                    MainGrid.Visibility = Visibility.Hidden;
+
+                    miClose.IsEnabled = false;
+                    //miSave.IsEnabled = false;
+                    miSaveAll.IsEnabled = false;
+                    //TO DO:
+                    /*-If changes, ask the user if wants to save them?
+                     *  SaveAll
+                     * -Reset watches
+                     * */
+                    break;
+            }           
+        }
+
+        private void SaveToWorkspaceModel() 
+        {
+            StopAllWatches(); //Lock watches
+            ws.AddCanvas(ws.getWorkspaceName() + "_Goals", GoalsCanvas, GoalsCurrentElapsedTimeDisplay.Text); 
+            ws.AddCanvas(ws.getWorkspaceName() + "_Essence", EssenceCanvas, EssenceCurrentElapsedTimeDisplay.Text);
+            ws.AddCanvas(ws.getWorkspaceName() + "_Constraints", ConstraintsCanvas, ConstraintsCurrentElapsedTimeDisplay.Text); 
+            ws.AddCanvas(ws.getWorkspaceName() + "_Alternatives", AlternativesCanvas, AlternativesCurrentElapsedTimeDisplay.Text);
+            ws.AddCanvas(ws.getWorkspaceName() + "_Assumptions", AssumptionsCanvas, AssumptionsCurrentElapsedTimeDisplay.Text);
+            ws.AddCanvas(ws.getWorkspaceName() + "_ImportantDecisions", ImpDecCanvas, ImpDecCurrentElapsedTimeDisplay.Text);
+            //ws.AddCanvas(ws.getWorkspaceName() + "_ActionItems", ActionItemsCanvas, ActionItemsCurrentElapsedTimeDisplay.Text);
+
+            //StartWatch(_activeCanvas, ) //TO DO: Start the active canvas watch
+        }
+
         //StopWatches //TO REFACTOR
         private void SetUpStopWatches()
         {
@@ -76,68 +234,139 @@ namespace MeetingBoard.View
             dtActItems.Tag = "dtActItems";
         }
 
-        //TO REFACTOR
-        private void StopAllWatches()
+        private void ResetAllWatches()
         {
-            if (swGoals.IsRunning) { swGoals.Stop(); }
-            if (swEssence.IsRunning) { swEssence.Stop(); }
-            if (swConstraints.IsRunning) { swConstraints.Stop(); }
-            if (swAlternatives.IsRunning) { swAlternatives.Stop(); }
-            if (swAssumptions.IsRunning) { swAssumptions.Stop(); }
-            if (swImpDec.IsRunning) { swImpDec.Stop(); }
-            if (swActItems.IsRunning) { swActItems.Stop(); }
-        }
-        private void StartWatch(DispatcherTimer dt, Stopwatch sw)
-        {
-            sw.Start();
-            dt.Start();
+            swGoals.Reset();
+            swEssence.Reset();
+            swConstraints.Reset();
+            swAlternatives.Reset();
+            swAssumptions.Reset();
+            swImpDec.Reset();
+            swActItems.Reset();
+
+            //TO REFACTOR: Change string for constant
+            GoalsCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            EssenceCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            ConstraintsCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            AlternativesCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            AssumptionsCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            ImpDecCurrentElapsedTimeDisplay.Text = "(00:00:00)";
+            //ActionItemsCurrentElapsedTimeDisplay.Text = "(00:00:00)";
         }
 
-        private void DisplayUpdatedTime(Stopwatch sw, TextBlock txt)
+        //TO DO: Before stopping it, save the active sw and dt into a global variable.
+        private void StopAllWatches()
         {
+            if (swGoals.IsRunning)
+            {
+                swGoals.Stop();
+                swActive = swGoals;
+                dtActive = dtGoals;
+            }
+            if (swEssence.IsRunning)
+            {
+                swEssence.Stop();
+                swActive = swEssence;
+                dtActive = dtEssence;
+            }
+            if (swConstraints.IsRunning)
+            {
+                swConstraints.Stop();
+                swActive = swConstraints;
+                dtActive = dtConstraints;
+            }
+            if (swAlternatives.IsRunning)
+            {
+                swAlternatives.Stop();
+                swActive = swAlternatives;
+                dtActive = dtAlternatives;
+            }
+            if (swAssumptions.IsRunning)
+            {
+                swAssumptions.Stop();
+                swActive = swAssumptions;
+                dtActive = dtAssumptions;
+            }
+            if (swImpDec.IsRunning)
+            {
+                swImpDec.Stop();
+                swActive = swImpDec;
+                dtActive = dtImpDec;
+            }
+            if (swActItems.IsRunning)
+            {
+                swActItems.Stop();
+                swActive = swActItems;
+                dtActive = dtActItems;
+            }
+        }
+
+        private void StartWatch(DispatcherTimer dt, Stopwatch sw)
+        {
+            if (!sw.IsRunning)
+            {
+                sw.Start();
+                dt.Start();
+            }
+        }
+
+        private void ResetWatch(Stopwatch sw)
+        {
+            sw.Reset();
+        }
+        private string DisplayUpdatedTime(Stopwatch sw, string lastTime)
+        {
+            string currentTime = lastTime;
             if (sw.IsRunning)
             {
                 /*
+                 *OLD
                  currentTime = String.Format("{0:00}:{1:00}:{2:00}",
                  ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                 */ //OLD
-
+                 */
+                
                 TimeSpan ts = sw.Elapsed;
                 currentTime = String.Format("{0:00}:{1:00}:{2:00}",
                 ts.Hours, ts.Minutes, ts.Seconds);
-                txt.Text = "";
-                txt.Text = currentTime;
+
             }
+            return "("+currentTime+")";
         }
 
         void dt_Tick(object sender, EventArgs e)
         {
             DispatcherTimer dt = sender as DispatcherTimer;
+            string strTemp = "";
             switch (dt.Tag.ToString())
             {
                 case "dtGoals":
                     //Debug.WriteLine("dt name:" + dt.Tag.ToString());
-                    DisplayUpdatedTime(swGoals, GoalsCurrentElapsedTimeDisplay);
+                    strTemp = GoalsCurrentElapsedTimeDisplay.Text;
+                    GoalsCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swGoals, strTemp.Substring(1,strTemp.Length-2));
                     break;
                 case "dtEssence":
-                    DisplayUpdatedTime(swEssence, EssenceCurrentElapsedTimeDisplay);
+                    strTemp = EssenceCurrentElapsedTimeDisplay.Text;
+                    EssenceCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swEssence, strTemp.Substring(1, strTemp.Length - 2));
                     break;
                 case "dtConstraints":
-                    DisplayUpdatedTime(swConstraints, ConstraintsCurrentElapsedTimeDisplay);
+                    strTemp = ConstraintsCurrentElapsedTimeDisplay.Text;
+                    ConstraintsCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swConstraints, strTemp.Substring(1, strTemp.Length - 2));
                     break;
                 case "dtAlternatives":
-                    DisplayUpdatedTime(swAlternatives, AlternativesCurrentElapsedTimeDisplay);
+                    strTemp = AlternativesCurrentElapsedTimeDisplay.Text;
+                    AlternativesCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swAlternatives, strTemp.Substring(1, strTemp.Length - 2));
                     break;
                 case "dtAssumptions":
-                    DisplayUpdatedTime(swAssumptions, AssumptionsCurrentElapsedTimeDisplay);
+                    strTemp = AssumptionsCurrentElapsedTimeDisplay.Text;
+                    AssumptionsCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swAssumptions, strTemp.Substring(1, strTemp.Length - 2));
                     break;
                 case "dtImpDec":
-                    DisplayUpdatedTime(swImpDec, ImpDecCurrentElapsedTimeDisplay);
+                    strTemp = ImpDecCurrentElapsedTimeDisplay.Text;
+                    ImpDecCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swImpDec, strTemp.Substring(1, strTemp.Length - 2));
                     break;
-                case "dtActItems":
-                    DisplayUpdatedTime(swActItems, ActionItemsCurrentElapsedTimeDisplay);
-                    break;
-                /* you can have any number of case statements */
+                /*case "dtActItems":                    
+                    ActionItemsCurrentElapsedTimeDisplay.Text = DisplayUpdatedTime(swActItems, ActionItemsCurrentElapsedTimeDisplay.Text);
+                    break;*/
                 default:
                     //activeCanvas = this.GoalsCanvas;  //First Canvas by default
                     break;
@@ -146,75 +375,67 @@ namespace MeetingBoard.View
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            TabItem ti = MainTabControl.SelectedItem as TabItem;
-            StopAllWatches();
-            switch (ti.Name)
-            {
-                case "TabGoals":
-                    StartWatch(dtGoals, swGoals);
-                    _activeCanvas = this.GoalsCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabEssence":
-                    StartWatch(dtEssence, swEssence);
-                    _activeCanvas = this.EssenceCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabConstraints":
-                    StartWatch(dtConstraints, swConstraints);
-                    _activeCanvas = this.ConstraintsCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabAlternatives":
-                    StartWatch(dtAlternatives, swAlternatives);
-                    _activeCanvas = this.AlternativesCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabAssumptions":
-                    StartWatch(dtAssumptions, swAssumptions);
-                    _activeCanvas = this.AssumptionsCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabImpDec":
-                    StartWatch(dtImpDec, swImpDec);
-                    _activeCanvas = this.ImpDecCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas;
-                    break;
-                case "TabActionItems":
-                    StartWatch(dtActItems, swActItems);
-                    _activeCanvas = this.ActionItemsCanvas;
-                    //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
-                    toolbox.ActiveCanvas = _activeCanvas; 
-                    break;
-                default:
-                    //activeCanvas = this.GoalsCanvas;  //First Canvas by default
-                    break;
-            }
+            //if(MainGrid.Visibility == Visibility.Visible)
+            //{
+                TabItem ti = MainTabControl.SelectedItem as TabItem;
+                StopAllWatches();
+                switch (ti.Name)
+                {
+                    case "TabGoals":
+                        StartWatch(dtGoals, swGoals);
+                        _activeCanvas = this.GoalsCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    case "TabEssence":
+                        StartWatch(dtEssence, swEssence);
+                        _activeCanvas = this.EssenceCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    case "TabConstraints":
+                        StartWatch(dtConstraints, swConstraints);
+                        _activeCanvas = this.ConstraintsCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    case "TabAlternatives":
+                        StartWatch(dtAlternatives, swAlternatives);
+                        _activeCanvas = this.AlternativesCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    case "TabAssumptions":
+                        StartWatch(dtAssumptions, swAssumptions);
+                        _activeCanvas = this.AssumptionsCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    case "TabImpDec":
+                        StartWatch(dtImpDec, swImpDec);
+                        _activeCanvas = this.ImpDecCanvas;
+                        Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;
+                    /*case "TabActionItems":
+                        StartWatch(dtActItems, swActItems);
+                        _activeCanvas = this.ActionItemsCanvas;
+                        //Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
+                        toolbox.ActiveCanvas = _activeCanvas;
+                        break;*/
+                    default:
+                        //activeCanvas = this.GoalsCanvas;  //First Canvas by default
+                        break;
+                }
+
+            //}
+
         }
         private void Window_Closed(object sender, EventArgs e)
         {
             toolbox.Close();
             /*strokeMenu.Close();
             _highlighterStrokes.CompleteAdding();*/
-        }
-
-        private void cmdToolbox_Checked(object sender, RoutedEventArgs e)
-        {
-            toolbox.Owner = this;
-            toolbox.ActiveCanvas = _activeCanvas;
-            toolbox.Show();
-        }
-
-        private void cmdToolbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            toolbox.ActiveCanvas = _activeCanvas;
-            toolbox.Hide();
         }
 
         //TO DO: Check all inkCanvas selection events
@@ -249,32 +470,483 @@ namespace MeetingBoard.View
             /*showCopyMenu();
             _viewModel.activeCanvas.RefreshThumbnail();*/
         }
-
-        private void cmdDetails_Click(object sender, RoutedEventArgs e)
+      
+        //TO REFACTOR: Move to a util unit
+        private bool SaveWorkspaceStrokes()
         {
-            //Open detail editor
-            /*DetailsDialog d = new DetailsDialog(_viewModel.activeCanvas, _viewModel.canvasModel);
-            d.Owner = Window.GetWindow(this);
-            d.ShowDialog();*/
+            bool successfulOperation = false;       
+            string workspaceFullPath = ""; //TO REFACTOR: Change for default workspace location
+            try
+            {
+                //Save model to files
+                foreach (KeyValuePair<string, InkCanvas> entry in ws.getWorkspaceCanvases())
+                {
+                    workspaceFullPath = ws.getWorkspacePath() + "\\" + entry.Key + ".isf"; //TO REFACOR:Change for constant
+                    Debug.WriteLine(workspaceFullPath);
+                    SaveStroke(workspaceFullPath, entry.Value);
+                }
+                successfulOperation = true;
+            }
+            finally
+            {
+
+            }
+            return successfulOperation;
         }
 
-        private void cmdNew_Click(object sender, RoutedEventArgs e)
+        //TO DO: Move to a util unit
+        private void SaveStroke(string filePath, InkCanvas canvas)
         {
-            //NewCanvas();
+            FileStream fs = null;
+            try
+            {
+                   
+                //Only save canvas files with strokes  
+                if (canvas.Strokes.Count>0)
+                {
+                    fs = new FileStream(filePath, FileMode.Create);
+                    canvas.Strokes.Save(fs);
+                    Debug.WriteLine("Strokes saved.");
+                }      
+            }
+            finally
+            {
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+            }
         }
 
-        private void cmdClone_Click(object sender, RoutedEventArgs e)
+        //TO REFACTOR: Chanf for a xml/json structure
+        private void CreateNewConfigFile(string filePath)
         {
-            /*_viewModel.CloneCanvas();
-            RebindStrokes();
-            _viewModel.activeCanvas.RefreshThumbnail();
-            this.ApplyAllFilters();
-            SelectActiveCanvas();*/
+            //string path = @"c:\temp\MyTest.txt";
+
+            // Create a file to write to.
+            using (StreamWriter sw = File.CreateText(filePath)) //TO REFACTOR: Change for constant
+            {
+                //write the time spend on each canvas
+                foreach (KeyValuePair<string, string> entry in ws.getWorkspaceCanvasesTime())
+                {
+                    sw.WriteLine(entry.Key + ":"+ entry.Value);
+                }
+            }
+        }
+        private bool SaveWorkspaceConfig()
+        {
+            bool successfullOperation = false;
+            try
+            {
+                if (!File.Exists(ws.getWorkspaceFullPath()))
+                {
+                    CreateNewConfigFile(ws.getWorkspaceFullPath());
+                }else
+                {
+                    //TO DO: Update timing in config file
+                }
+                successfullOperation = true;
+            }
+            finally
+            {
+                //
+            }
+            return successfullOperation;
+        }
+        /*
+         *         private void LoadStroke(string filePath, InkCanvas canvas)
+        {
+            FileStream fs = null;
+            try
+            {
+                //filePath = @"E:\Proyectos\MeetingBoard\StrokesFolder\stroke.isf" 
+                Debug.WriteLine(filePath);
+                if(File.Exists(filePath))
+                {
+                    fs = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+                    if (canvas.Strokes.Count > 0)
+                    {
+                        StrokeCollection strokes = new StrokeCollection(fs);
+                        canvas.Strokes = strokes;
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            finally
+            {
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+            }
+        }
+         */
+        private StrokeCollection UpdateStrokeInWorkspaceModel(string filePath, string canvasName)
+        {
+            FileStream fs = null;
+            StrokeCollection strokes = null;
+            try
+            {
+                //filePath = @"E:\Proyectos\MeetingBoard\StrokesFolder\stroke.isf" 
+                Debug.WriteLine(filePath);
+                if(File.Exists(filePath)) //If file exists it will have strokes
+                {
+                    fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                    strokes = new StrokeCollection(fs);                  
+                }
+            }
+            finally
+            {
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+            }
+            return strokes;
         }
 
-        private void cmdQuit_Click(object sender, RoutedEventArgs e)
+        private void New_Click(object sender, RoutedEventArgs e)
         {
-            //this.DoneEditing();
+            SetUpMainGrid(1);
+        }
+
+        private bool LoadConfigFile()
+        {
+            bool successfullOperation = false;
+            try
+            {
+                //@"C:\Users\Public\TestFolder\WriteLines2.txt" //OLD
+                string[] lines = System.IO.File.ReadAllLines(ws.getWorkspaceFullPath());
+
+                // Display the file contents by using a foreach loop.
+                Debug.WriteLine("Config file content:");
+                foreach (string line in lines)
+                {
+                    //TO DO: Update initial timing 
+                    Debug.WriteLine("\t" + line);
+                }
+                successfullOperation = true;
+                /*
+                 	workspace2_Goals:00:00:01
+	                workspace2_Essence:00:00:00
+	                workspace2_Constraints:00:00:00
+	                workspace2_Alternatives:00:00:00
+	                workspace2_Assumptions:00:00:00
+	                workspace2_ImportantDecisions:00:00:03
+	                workspace2_ActionItems:00:00:00
+                 */
+            }
+            catch
+            {
+
+            }
+            return successfullOperation;
+        }
+
+        private bool LoadStrokesToWorkspace()
+        {
+            bool successfullOperation = false;
+            try
+            {
+                //Update Strokes from files to model
+                StrokeCollection strokes = null;
+                foreach (KeyValuePair<string, InkCanvas> entry in ws.getWorkspaceCanvases())
+                {
+                    Debug.WriteLine(entry.Key);
+                    strokes = UpdateStrokeInWorkspaceModel(ws.getWorkspacePath() + "\\" + entry.Key + ".isf", entry.Key);
+                    if (strokes != null)
+                    {
+                        entry.Value.Strokes = strokes;
+                    }
+                }
+                successfullOperation = true;
+            }
+            finally
+            {
+
+            }
+            return successfullOperation;
+            //Strokes from model to view
+            /*foreach (KeyValuePair<string, InkCanvas> entry in ws.getWorkspaceCanvases())
+            {
+                Debug.WriteLine(entry.Key);
+                
+                LoadStroke(ws.getWorkspacePath() + "\\" + entry.Key+ ".isf", entry.Value);
+                
+            }*/
+            //GoalsCanvas.Strokes = ws.getWorkspaceCanvases()[ws.getWorkspaceName() + "_Goals"].Strokes; //TEST
+
+            /*LoadStroke(ws.getWorkspacePath() +"\\"+ ws.getWorkspaceName() + "_Goals.isf", GoalsCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_Essence.isf", EssenceCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_Constraints.isf", ConstraintsCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_Alternatives.isf", AlternativesCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_Assumptions.isf", AssumptionsCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_ImportantDecisions.isf", ImpDecCanvas);
+            LoadStroke(ws.getWorkspacePath() + "\\" + ws.getWorkspaceName() + "_ActionItemss.isf", ActionItemsCanvas);*/
+
+        }
+
+        private bool OpenWorkspace()
+        {
+            bool successfullOperation = false;
+            string fullFilePath = "";
+            string workspaceName = ""; //TO REFACTOR: Change for default workspace constant
+            string filePath = ""; //TO REFACTOR: Change for default path constant
+
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.InitialDirectory = "c:\\"; //TO DO: Change for last open folder
+                    openFileDialog.Filter = "workspace files (*.config)|*.config|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    openFileDialog.Title = "Open Workspace";
+                    openFileDialog.RestoreDirectory = true;
+
+                    if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        fullFilePath = openFileDialog.FileName; //ConfigFile
+                        Debug.WriteLine(fullFilePath);
+
+                        if (fullFilePath != "")
+                        {
+                            workspaceName = System.IO.Path.GetFileNameWithoutExtension(fullFilePath);
+                            filePath = System.IO.Directory.GetParent(fullFilePath).ToString();
+
+                            //SetUp workspace data
+                            ws.ResetWorkspace();
+                            ws.setWorkspaceFullPath(fullFilePath); //For ConfigFile
+                            ws.setWorkspaceName(workspaceName);
+                            ws.setWorkspacePath(filePath);
+
+                        }
+
+                        //Load files
+                        if (ws.getWorkspaceFullPath() != "")
+                        {
+                            SaveToWorkspaceModel();
+                            //TO DO: Read canvas timing
+                            ClearAllCanvas();
+                            successfullOperation = (LoadConfigFile() && LoadStrokesToWorkspace());
+                        }
+                    }else
+                    {
+                        //TO DO: Recover previous workspace model
+                    }
+                }
+            }
+            catch
+            {
+                //TO DO
+            }
+            finally
+            {
+                //TO DO
+            }
+            return successfullOperation;
+
+        }
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            SetUpMainGrid(2);
+
+            //Open one stroke
+            /*string fileName = null;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = "c:\\";
+                openFileDialog.Filter = "isf files (*.isf)|*.isf|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    fileName = openFileDialog.FileName;
+                    Debug.WriteLine(fileName);
+                }
+            }
+
+            if (fileName != null)
+            {
+                LoadStroke(fileName, GoalsCanvas);
+            }*/
+        }
+
+        private bool SaveWorkspace()
+        {
+            bool successfullOperation = false;
+            try
+            {
+                if (ws.getWorkspaceFullPath() == "") //If empty
+                {
+                    string fullFilePath = "";
+                    string workspaceName = ""; //TO REFACTOR: Change for default workspace constant
+                    string filePath = ""; //TO REFACTOR: Change for default path constant
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                    {
+                        saveFileDialog.Filter = "workspace files (*.config)|*.config|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
+                        saveFileDialog.FilterIndex = 1;
+                        saveFileDialog.Title = "Save Workspace";
+                        saveFileDialog.RestoreDirectory = true;
+                        saveFileDialog.ShowDialog();
+
+                        fullFilePath = saveFileDialog.FileName;
+                        if (fullFilePath != "")
+                        {
+                            workspaceName = System.IO.Path.GetFileNameWithoutExtension(fullFilePath);
+                            filePath = System.IO.Directory.GetParent(fullFilePath).ToString();
+
+                            //SetUp workspace data
+                            ws.setWorkspaceFullPath(fullFilePath); //For ConfigFile
+                            ws.setWorkspaceName(workspaceName);
+                            ws.setWorkspacePath(filePath);
+
+                            SaveToWorkspaceModel();
+                        }
+                    }
+                    
+                }   
+                if(ws.getWorkspaceFullPath()!="")
+                {
+                    successfullOperation = (SaveWorkspaceConfig() && SaveWorkspaceStrokes());
+                }                       
+            }
+            catch
+            {
+                //TO DO
+            }
+            finally
+            {
+                //TO DO
+            }
+            return successfullOperation;
+        }
+        private void SaveAll_Click(object sender, RoutedEventArgs e)
+        {
+            SetUpMainGrid(4);
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            //TO DO: Save active canvas
+            /*
+             * -If the workspace is saved, saves active tab
+             * -If not, saves all the workspace 
+             */
+            SetUpMainGrid(3);
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            SetUpMainGrid(5); //TO REFACTOR: Change number for a constant
+        }
+
+        private void GoalsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblGoals.Visibility != Visibility.Hidden)
+            {
+                lblGoals.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void EssenceCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblEssence.Visibility != Visibility.Hidden)
+            {
+                lblEssence.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void ConstraintsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblConstraints.Visibility != Visibility.Hidden)
+            {
+                lblConstraints.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void AssumptionsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblAssumptions.Visibility != Visibility.Hidden)
+            {
+                lblAssumptions.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void AlternativesCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblAlternatives.Visibility != Visibility.Hidden)
+            {
+                lblAlternatives.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void ImpDecCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lblImpDec.Visibility != Visibility.Hidden)
+            {
+                lblImpDec.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void cmdDraw_Click(object sender, RoutedEventArgs e)
+        {
+            _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
+            _activeCanvas.DefaultDrawingAttributes = _penSettings;
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdErase_Click(object sender, RoutedEventArgs e)
+        {
+            _activeCanvas.EditingMode = InkCanvasEditingMode.EraseByPoint;
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdEraseStroke_Click(object sender, RoutedEventArgs e)
+        {
+            _activeCanvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdSelect_Click(object sender, RoutedEventArgs e)
+        {
+            _activeCanvas.EditingMode = InkCanvasEditingMode.Select;
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = System.Windows.MessageBox.Show("Are you sure you want to clear the canvas? \n This action cannot be undone.", "Confirm Action", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+                _activeCanvas.Strokes.Clear();
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdUndo_Click(object sender, RoutedEventArgs e)
+        {
+            //TO DO
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdRedo_Click(object sender, RoutedEventArgs e)
+        {
+            //TO DO
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+        }
+
+        private void cmdToolbox_Checked(object sender, RoutedEventArgs e)
+        {
+            toolbox.Owner = this;
+            toolbox.ActiveCanvas = _activeCanvas;
+            toolbox.Show();
+        }
+
+        private void cmdToolbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            toolbox.Hide();
         }
     }
 }

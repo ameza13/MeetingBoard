@@ -26,7 +26,7 @@ namespace MeetingBoard.View
     {
         MeetingBoardMain parent;
         DrawingAttributes _penSettings = new DrawingAttributes();
-        DrawingAttributes _highlighterSettings = new DrawingAttributes();
+        //DrawingAttributes _highlighterSettings = new DrawingAttributes();
         private InkCanvas _activeCanvas;
 
         public InkCanvas ActiveCanvas
@@ -55,38 +55,6 @@ namespace MeetingBoard.View
         private void _initDrawingAttributes()
         {
             _penSettings = _activeCanvas.DefaultDrawingAttributes;
-            _highlighterSettings.IsHighlighter = true;
-            _highlighterSettings.Height = 10;
-            _highlighterSettings.Width = 10;
-            _highlighterSettings.Color = Colors.Yellow; 
-        }
-
-        private void cmdErase_Click(object sender, RoutedEventArgs e)
-        {
-            _activeCanvas.EditingMode = InkCanvasEditingMode.EraseByPoint;
-            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
-        }
-
-        private void cmdDraw_Click(object sender, RoutedEventArgs e)
-        {
-            _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-            _activeCanvas.DefaultDrawingAttributes = _penSettings;
-        }
-
-        private void cmdEraseStroke_Click(object sender, RoutedEventArgs e)
-        {
-            _activeCanvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
-        }
-
-        private void cmdHighlighter_Click(object sender, RoutedEventArgs e)
-        {
-            /*activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-            activeCanvas.DefaultDractiveCanvasawingAttributes = _highlighterSettings;*/ //CHECK IT: Does this work?
-        }
-
-        private void cmdSelect_Click(object sender, RoutedEventArgs e)
-        {
-            _activeCanvas.EditingMode = InkCanvasEditingMode.Select;
         }
 
         private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
@@ -95,7 +63,7 @@ namespace MeetingBoard.View
             _penSettings.Color = cp.SelectedColor;
             _activeCanvas.DefaultDrawingAttributes = _penSettings;
             _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-            cmdDraw.IsChecked = true;            
+            //cmdDraw.IsChecked = true;            
         }
 
         private void BrushSize_Click(object sender, RoutedEventArgs e)
@@ -107,12 +75,7 @@ namespace MeetingBoard.View
             _penSettings.Width = r.Height;
             _activeCanvas.DefaultDrawingAttributes = _penSettings;
             _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-            cmdDraw.IsChecked = true;    
-        }
-
-        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            DragMove();
+            //cmdDraw.IsChecked = true;    
         }
 
         private void cmdUndo_Click(object sender, RoutedEventArgs e)
@@ -123,13 +86,6 @@ namespace MeetingBoard.View
         private void cmdRedo_Click(object sender, RoutedEventArgs e)
         {
             //parent.redo(); //TO DO
-        }
-
-        private void cmdClear_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = System.Windows.MessageBox.Show("Are you sure you want to clear the canvas?  This action cannot be undone.", "Confirm Action", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-                _activeCanvas.Strokes.Clear();
         }
 
         private void BrushSizeDown_Click(object sender, RoutedEventArgs e)
@@ -150,8 +106,13 @@ namespace MeetingBoard.View
             {
                 _activeCanvas.DefaultDrawingAttributes = _penSettings;
                 _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-                cmdDraw.IsChecked = true;
+                //cmdDraw.IsChecked = true;
             }
+        }
+
+        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
 
         private void Window_Activated(object sender, EventArgs e)

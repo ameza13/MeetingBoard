@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -52,6 +53,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPF.MDI">
+      <HintPath>..\References\WPF.MDI.dll</HintPath>
+    </Reference>
     <Reference Include="WPFToolkit">
       <HintPath>..\References\WPFToolkit.dll</HintPath>
     </Reference>
@@ -64,6 +68,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Workspace.cs" />
+    <Compile Include="Utils\TextUtils.cs" />
     <Compile Include="View\MeetingBoardMain.xaml.cs">
       <DependentUpon>MeetingBoardMain.xaml</DependentUpon>
     </Compile>
@@ -119,7 +125,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\" />
     <Folder Include="ViewModel\" />
   </ItemGroup>
   <ItemGroup>

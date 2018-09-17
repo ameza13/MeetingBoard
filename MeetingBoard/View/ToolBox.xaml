@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="ToolBox" Height="190" Width="206"
+        Title="Pen Settings" Height="150" Width="200"
         WindowStyle="none"
         WindowStartupLocation="CenterOwner"
         Topmost="True"
@@ -11,61 +11,27 @@
         Background="Transparent"
         Activated="Window_Activated"
         Deactivated="Window_Deactivated">
-    <Border Background="White"  CornerRadius="5,5,5,5" Padding="1" BorderBrush="Gray" BorderThickness="1" MouseLeftButtonDown="Border_MouseLeftButtonDown" Focusable="False">
+    <Border Background="WhiteSmoke"  CornerRadius="5,5,5,5" Padding="1" BorderBrush="DarkGray" BorderThickness="1" MouseLeftButtonDown="Border_MouseLeftButtonDown" Focusable="False">
         <Grid Name="MainGrid" FocusManager.IsFocusScope="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid>
-                <TextBlock Text="Toolbox" Height="20" Background="AliceBlue" HorizontalAlignment="Stretch"></TextBlock>
+            <Grid  Grid.Row ="0">
+                <TextBlock Text=" Pen Settings" Height="20" Background="AliceBlue" HorizontalAlignment="Stretch" Foreground="DarkBlue"></TextBlock>
             </Grid>
-            <GroupBox Grid.Row ="1" Header="Drawing Mode" Margin="5, 0,5,0">
-                <WrapPanel Name="editmode" HorizontalAlignment="Center">
-                    <RadioButton Style="{StaticResource {x:Type ToggleButton}}" 
-                                 ToolTip="Draw" GroupName="EditMode" Name="cmdDraw" Click="cmdDraw_Click" Width="32" IsChecked="True">
-                        <Image Source="..\Images\WSPencil.png"/>
-                    </RadioButton>
-                    <RadioButton Style="{StaticResource {x:Type ToggleButton}}" 
-                                 ToolTip="Erase" GroupName="EditMode" Name="cmdErase" Click="cmdErase_Click" Width="32">
-                        <Image Source="..\Images\WSErase.png" />
-                    </RadioButton>
-                    <RadioButton Style="{StaticResource {x:Type ToggleButton}}" 
-                                 ToolTip="Erase" GroupName="EditMode" Name="cmdEraseStroke" Click="cmdEraseStroke_Click" Width="32">
-                        <Image Source="..\Images\WSEraseStroke.png" />
-                    </RadioButton>
-                    <!--RadioButton Style="{StaticResource {x:Type ToggleButton}}" 
-                                 ToolTip="Highlight" GroupName="EditMode" Name="cmdHighlighter" Click="cmdHighlighter_Click"  Width="32">
-                        <Image Source="..\Images\WSHighlighter.png" />
-                    </-->
-                    <RadioButton Style="{StaticResource {x:Type ToggleButton}}" 
-                                 ToolTip="Highlight" GroupName="EditMode" Name="cmdSelect" Click="cmdSelect_Click"  Width="32">
-                        <Image Source="..\Images\WSSelect.png" />
-                    </RadioButton>
-                </WrapPanel>
-            </GroupBox>
-            <GroupBox Grid.Row="2" Header="Brush" Margin="5,0,5,0">
-                <WrapPanel Name="lineThickness">
+            <GroupBox Grid.Row ="1" Header="Color" Margin="5, 0,5,0" Foreground="DarkBlue">
+                <WrapPanel Name="lineColor" HorizontalAlignment="Left">
                     <xctk:ColorPicker Name="cboColor" Width="50" Grid.Row="3" DisplayColorAndName="False" SelectedColorChanged="ColorPicker_SelectedColorChanged"/>
-                    <Rectangle Height="{Binding ElementName=BrushSizeSlider, Path=Value}" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="Black" Margin="10,0,10,0"/>
-                    <Button FontSize="18" Click="BrushSizeDown_Click">-</Button>
-                    <Slider Name="BrushSizeSlider" Width="50" Minimum="1" Maximum="8" IsSnapToTickEnabled="True" TickFrequency="1" Value="2" VerticalAlignment="Center" ValueChanged="BrushSizeSlider_ValueChanged"></Slider>
-                    <Button FontSize="18" Click="BrushSizeUp_Click">+</Button>
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Grid.Row="3" Header="Canvas" Margin="5,0,5,0">
-                <WrapPanel>
-                    <Button Height="32" Width="32" Name="cmdUndo" Grid.Column="0" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="cmdUndo_Click" ToolTip="Undo" IsEnabled="False">
-                        <Image Source="..\Images\Undo.png"></Image>
-                    </Button>
-                    <Button Height="32" Width="32" Name="cmdRedo" Grid.Column="1" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="cmdRedo_Click" ToolTip="Redo" IsEnabled="False">
-                        <Image Source="..\Images\Redo.png" ></Image>
-                    </Button>
-                    <Button Height="32" Width="50" Name="cmdClear" Grid.Column="2" HorizontalAlignment="Right" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="cmdClear_Click" ToolTip="Clear Canvas">
-                        <Image Source="..\Images\ClearCanvas.png"></Image>
-                    </Button>
+            <GroupBox Grid.Row="2" Header="Thickness" Margin="5,0,5,0" Foreground="DarkBlue">
+                <WrapPanel Name="lineThickness">
+                    <Rectangle Height="{Binding ElementName=BrushSizeSlider, Path=Value}" Width="30" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="Black" Margin="10,0,10,0"/>
+                    <Button FontSize="18" Height="30" Width="15" Background="WhiteSmoke" Click="BrushSizeDown_Click" >-</Button>
+                    <Slider Name="BrushSizeSlider" Width="50" Minimum="1" Maximum="8" IsSnapToTickEnabled="True" TickFrequency="1" Value="2" VerticalAlignment="Center" ValueChanged="BrushSizeSlider_ValueChanged"></Slider>
+                    <Button FontSize="18" Height="30" Width="15" Background="WhiteSmoke" Click="BrushSizeUp_Click">+</Button>
                 </WrapPanel>
             </GroupBox>
         </Grid>
