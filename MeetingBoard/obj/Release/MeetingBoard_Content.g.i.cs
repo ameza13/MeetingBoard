@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/wszoomout.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/meetingboard.ico")]
 
 

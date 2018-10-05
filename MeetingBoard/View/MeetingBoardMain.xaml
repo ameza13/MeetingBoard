@@ -27,7 +27,7 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1">
+        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
@@ -42,9 +42,9 @@
                 <Button x:Name="cmdDraw" Click="cmdDraw_Click" Margin="5" ToolTip="Draw" Background="WhiteSmoke">
                     <Image Source="..\Images\WSPencil.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
-                <Button x:Name="cmdSelect" Click="cmdSelect_Click" Margin="5" ToolTip="Select area" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSSelect.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Button>
+                <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Pen Settings" Background="WhiteSmoke">
+                    <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </ToggleButton>
                 <Button x:Name="cmdErase" Click="cmdErase_Click" Margin="5" ToolTip="Erase" Background="WhiteSmoke">
                     <Image Source="..\Images\WSErase.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
@@ -54,15 +54,22 @@
                 <Button x:Name="cmdClearAll" Click="cmdClearAll_Click" Margin="5" ToolTip="Erase all" Background="WhiteSmoke">
                     <Image Source="..\Images\WSEraseStroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
-                <Button x:Name="cmdUndo" Click="cmdUndo_Click" Margin="5" ToolTip="Undo" Background="WhiteSmoke">
-                    <Image Source="..\Images\Undo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <Button x:Name="cmdSelect" Click="cmdSelect_Click" Margin="5" ToolTip="Select area" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSSelect.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
+                <!--Button x:Name="cmdUndo" Click="cmdUndo_Click" Margin="5" ToolTip="Undo" Background="WhiteSmoke">
+                    <Image Source="..\Images\Undo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </>
                 <Button x:Name="cmdRedo" Click="cmdRedo_Click" Margin="5" ToolTip="Redo" Background="WhiteSmoke">
                     <Image Source="..\Images\Redo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Button-->
+                <Button x:Name="cmdZoomIn" Click="cmdZoomIn_Click" Margin="5" ToolTip="Zoom In" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSZoomIn.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
-                <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Pen Settings" Background="WhiteSmoke">
-                    <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </ToggleButton>
+                <Button x:Name="cmdZoomOut" Click="cmdZoomOut_Click" Margin="5" ToolTip="Zoom Out" Background="WhiteSmoke">
+                    <Image Source="..\Images\WSZoomOut.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+
             </WrapPanel>
             <Grid Grid.Column="1" >
                 <TabControl x:Name="MainTabControl" SelectionChanged="TabControl_SelectionChanged" FontSize="18" Margin="5">
@@ -104,41 +111,36 @@
 			                            VerticalAlignment="Stretch">
                             <Grid x:Name="GoalsGrid" DataContext="" Background="WhiteSmoke">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="15"/>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="15"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="15"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="15"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="GoalsBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
                                         <DropShadowEffect Color="DarkGray"/>
                                     </Border.Effect>
                                 </Border>
-
                                 <InkCanvas x:Name="GoalsCanvas" 
                                    Grid.Row="1"
-                                   Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                   Grid.Column="1"                             
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"      
-                                   MouseUp="GoalsCanvas_MouseUp"
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+                                   MouseUp="GoalsCanvas_MouseUp"       
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch">
                                     <Label x:Name="lblGoals" Margin="50" Content="What do we want to accomplish in today's design meeting?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas>
                             </Grid>
@@ -167,11 +169,9 @@
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="EssenceBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
@@ -181,15 +181,14 @@
                                 <InkCanvas x:Name="EssenceCanvas" 
                                    Grid.Row="1"
                                    Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                  
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"     
                                    MouseUp ="EssenceCanvas_MouseUp"
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch">
                                     <Label x:Name="lblEssence" Margin="50" Content="What is the most important/most challenging part of the design problem for us to get right?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas>
                             </Grid>
@@ -218,11 +217,9 @@
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="ConstraintsBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
@@ -231,16 +228,14 @@
                                 </Border>
                                 <InkCanvas x:Name="ConstraintsCanvas" 
                                    Grid.Row="1"
-                                   Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                   Grid.Column="1"                                   
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"  
                                    MouseUp="ConstraintsCanvas_MouseUp"
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch">
                                     <Label x:Name="lblConstraints" Margin="50" Content=" What factors, technological or otherwise, limit the choices we can make?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas>
                             </Grid>
@@ -269,11 +264,9 @@
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="AssumptionsBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
@@ -282,16 +275,14 @@
                                 </Border>
                                 <InkCanvas x:Name="AssumptionsCanvas" 
                                    Grid.Row="1"
-                                   Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                   Grid.Column="1"                                  
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"    
                                    MouseUp="AssumptionsCanvas_MouseUp"
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch">
                                     <Label x:Name="lblAssumptions" Margin="50" Content=" What aspects of our design rest on a belief that, if false, would pose a serious problem?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas>
                             </Grid>
@@ -320,11 +311,9 @@
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="AlternativesBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
@@ -333,16 +322,14 @@
                                 </Border>
                                 <InkCanvas x:Name="AlternativesCanvas" 
                                    Grid.Row="1"
-                                   Grid.Column="1"
-					               Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					               Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                   
+                                   Grid.Column="1"                                
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"
                                    MouseUp="AlternativesCanvas_MouseUp"
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch">
                                     <Label x:Name="lblAlternatives" Margin="50" Content="What are different ways of solving the design problem?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas>
                             </Grid>
@@ -371,11 +358,9 @@
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
                                 <!--Sibling border to add shadow -->
-                                <Border Grid.Row="1" Grid.Column="1" 
-					            HorizontalAlignment="Center"
-					            VerticalAlignment="Center"
-                                Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-					            Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"
+                                <Border x:Name="ImpDecBorder" Grid.Row="1" Grid.Column="1" 
+					            HorizontalAlignment="Stretch"
+					            VerticalAlignment="Stretch" 
 					            BorderBrush="DarkGray"
 					            BorderThickness="3">
                                     <Border.Effect>
@@ -384,16 +369,14 @@
                                 </Border>
                                 <InkCanvas x:Name="ImpDecCanvas" 
                                    Grid.Row="1"
-                                   Grid.Column="1"
-                                   Height="{Binding workingAreaHeight, Mode=OneWay, Source={x:Static properties:Settings.Default}}" 
-                                   Width="{Binding workingAreaWidth, Mode=OneWay, Source={x:Static properties:Settings.Default}}"                                         
+                                   Grid.Column="1"                                        
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"     
                                    MouseUp="ImpDecCanvas_MouseUp"        
-					               HorizontalAlignment="Center"
-					               VerticalAlignment="Center">
+					               HorizontalAlignment="Stretch"
+					               VerticalAlignment="Stretch" >
                                     <Label x:Name="lblImpDec" Margin="50" Content=" What are the key choices that we made?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
                                 </InkCanvas> 
                             </Grid>

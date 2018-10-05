@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
 using System.Windows.Ink;
 using MeetingBoard.Model;
-using MeetingBoard.Utils;
 
 namespace MeetingBoard.View
 {
@@ -49,9 +42,13 @@ namespace MeetingBoard.View
         Stopwatch swActive;
 
         InkCanvas _activeCanvas;
-        
+        Border _activeBorder;
+
         DrawingAttributes _penSettings = new DrawingAttributes();
         DrawingAttributes _highlighterSettings = new DrawingAttributes();
+
+        ScaleTransform st = new ScaleTransform();
+        const double ScaleRate = 1.1;
 
         public MeetingBoardMain()
         {
@@ -60,8 +57,11 @@ namespace MeetingBoard.View
             ws = new Workspace();
 
             _activeCanvas = GoalsCanvas;
+            _activeBorder = GoalsBorder;
+
             SetUpStopWatches();
             _initDrawingAttributes();
+
         }
 
         private void _initDrawingAttributes()
@@ -384,36 +384,42 @@ namespace MeetingBoard.View
                     case "TabGoals":
                         StartWatch(dtGoals, swGoals);
                         _activeCanvas = this.GoalsCanvas;
+                        _activeBorder = this.GoalsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
                     case "TabEssence":
                         StartWatch(dtEssence, swEssence);
                         _activeCanvas = this.EssenceCanvas;
+                        _activeBorder = this.EssenceBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
                     case "TabConstraints":
                         StartWatch(dtConstraints, swConstraints);
                         _activeCanvas = this.ConstraintsCanvas;
+                        _activeBorder = this.ConstraintsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
                     case "TabAlternatives":
                         StartWatch(dtAlternatives, swAlternatives);
                         _activeCanvas = this.AlternativesCanvas;
+                        _activeBorder = this.AlternativesBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
                     case "TabAssumptions":
                         StartWatch(dtAssumptions, swAssumptions);
                         _activeCanvas = this.AssumptionsCanvas;
+                        _activeBorder = this.AssumptionsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
                     case "TabImpDec":
                         StartWatch(dtImpDec, swImpDec);
                         _activeCanvas = this.ImpDecCanvas;
+                        _activeBorder = this.ImpDecBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
                         break;
@@ -518,20 +524,132 @@ namespace MeetingBoard.View
             }
         }
 
+        private XmlDocument CreateSessionData(string xmlContent)
+        {
+            XmlDocument doc = new XmlDocument();
+            XmlElement root;
+            doc.LoadXml(xmlContent);
+            //select your specific node ..
+
+            //< SESSION >< TIMING ></ TIMING ></ SESSION >
+
+            //Add session element
+            root = (XmlElement)doc.SelectSingleNode("/SESSIONS");
+            if (root != null)
+            {
+                XmlElement sessionElement = doc.CreateElement("SESSION");
+                sessionElement.SetAttribute("ID", DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                root.InsertAfter(sessionElement, root.LastChild);
+                //el.AppendChild(sessionElement);
+
+                //Add Timing section
+                XmlElement timingElement = doc.CreateElement("TIMING");
+                sessionElement.InsertAfter(timingElement, sessionElement.LastChild);
+
+                XmlElement canvasElement;
+                foreach (KeyValuePair<string, string> entry in ws.getWorkspaceCanvasesTime())
+                {      
+                    canvasElement = doc.CreateElement("CANVAS");
+                    canvasElement.SetAttribute("NAME", entry.Key);
+                    canvasElement.SetAttribute("TIME", entry.Value);
+                    timingElement.InsertAfter(canvasElement, timingElement.LastChild);                   
+                }
+
+            }
+            /*el = (XmlElement)doc.SelectSingleNode("/SESSIONS/" + "SESSION");
+            if (el != null)
+            {
+                XmlElement idElement = doc.CreateElement("ID");
+                idElement.InnerText = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                el.AppendChild(idElement);
+            }
+
+            XmlElement newElement;
+            
+            foreach (KeyValuePair<string, string> entry in ws.getWorkspaceCanvasesTime())
+            {
+                el = (XmlElement)doc.SelectSingleNode("/SESSIONS/SESSION/" + "TIMING");
+                if (el != null)
+                {
+                    newElement = doc.CreateElement("CANVAS");
+                    newElement.SetAttribute("NAME", entry.Key);
+                    el.AppendChild(newElement);
+
+                    el = (XmlElement)doc.SelectSingleNode("/SESSIONS/SESSION/TIMING/" + "CANVAS");
+                    if (el != null)
+                    {
+                        newElement = doc.CreateElement("TIME");
+                        newElement.InnerText = entry.Value;
+                        el.AppendChild(newElement);
+                    }
+                }
+            }*/ //OLD
+            return doc;
+        }
+
         //TO REFACTOR: Chanf for a xml/json structure
         private void CreateNewConfigFile(string filePath)
         {
-            //string path = @"c:\temp\MyTest.txt";
+            // Create the XmlDocument.
+            XmlDocument doc;
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
 
-            // Create a file to write to.
-            using (StreamWriter sw = File.CreateText(filePath)) //TO REFACTOR: Change for constant
+            XmlWriter writer = XmlWriter.Create(filePath, settings);
+
+            doc = CreateSessionData("<SESSIONS></SESSIONS>");           
+            if (doc != null)
             {
+                doc.Save(writer);
+            }           
+            // Create a file to write to.
+            /*using (StreamWriter sw = File.CreateText(filePath)) //TO REFACTOR: Change for constant
+            {
+                sw.WriteLine("session id:" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));                
                 //write the time spend on each canvas
                 foreach (KeyValuePair<string, string> entry in ws.getWorkspaceCanvasesTime())
                 {
                     sw.WriteLine(entry.Key + ":"+ entry.Value);
                 }
+            }*/ //OLD
+
+        }
+        private void UpdateConfigFile(string filePath)
+        {
+            // Create the XmlDocument.
+            XmlDocument doc = new XmlDocument();
+            doc.PreserveWhitespace = true;
+
+            doc.Load(filePath);           
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+
+            XmlWriter writer = XmlWriter.Create(filePath, settings);
+
+            doc = CreateSessionData(doc.DocumentElement.OuterXml);
+            if (doc != null)
+            {
+                doc.Save(writer);
             }
+         
+            /*XmlDocument doc = new XmlDocument();
+            doc.PreserveWhitespace = true;
+            try { doc.Load("booksData.xml"); }
+            catch (System.IO.FileNotFoundException)
+            {
+                doc.LoadXml("<?xml version=\"1.0\"?> \n" +
+                "<books xmlns=\"http://www.contoso.com/books\"> \n" +
+                "  <book genre=\"novel\" ISBN=\"1-861001-57-8\" publicationdate=\"1823-01-28\"> \n" +
+                "    <title>Pride And Prejudice</title> \n" +
+                "    <price>24.95</price> \n" +
+                "  </book> \n" +
+                "  <book genre=\"novel\" ISBN=\"1-861002-30-1\" publicationdate=\"1985-01-01\"> \n" +
+                "    <title>The Handmaid's Tale</title> \n" +
+                "    <price>29.95</price> \n" +
+                "  </book> \n" +
+                "</books>");
+            }*/
         }
         private bool SaveWorkspaceConfig()
         {
@@ -543,7 +661,8 @@ namespace MeetingBoard.View
                     CreateNewConfigFile(ws.getWorkspaceFullPath());
                 }else
                 {
-                    //TO DO: Update timing in config file
+                    UpdateConfigFile(ws.getWorkspaceFullPath());
+                    
                 }
                 successfullOperation = true;
             }
@@ -613,6 +732,15 @@ namespace MeetingBoard.View
             SetUpMainGrid(1);
         }
 
+        /*
+         Feedback required: This method does not update the tab's time with the
+         data from the configuration file. 
+
+         Design Question:
+         Would it be actually worthy the the users could see how much time
+         has been spen on each tab when they re-open a meeting-board from
+         a previous session?
+        */
         private bool LoadConfigFile()
         {
             bool successfullOperation = false;
@@ -701,7 +829,7 @@ namespace MeetingBoard.View
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
                     openFileDialog.InitialDirectory = "c:\\"; //TO DO: Change for last open folder
-                    openFileDialog.Filter = "workspace files (*.config)|*.config|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
+                    openFileDialog.Filter = "workspace files (*.xml)|*.xml|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
                     openFileDialog.FilterIndex = 1;
                     openFileDialog.Title = "Open Workspace";
                     openFileDialog.RestoreDirectory = true;
@@ -721,7 +849,6 @@ namespace MeetingBoard.View
                             ws.setWorkspaceFullPath(fullFilePath); //For ConfigFile
                             ws.setWorkspaceName(workspaceName);
                             ws.setWorkspacePath(filePath);
-
                         }
 
                         //Load files
@@ -787,7 +914,7 @@ namespace MeetingBoard.View
                     string filePath = ""; //TO REFACTOR: Change for default path constant
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        saveFileDialog.Filter = "workspace files (*.config)|*.config|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
+                        saveFileDialog.Filter = "workspace files (*.xml)|*.xml|stroke files (*.isf)|*.isf|All files (*.*)|*.*";
                         saveFileDialog.FilterIndex = 1;
                         saveFileDialog.Title = "Save Workspace";
                         saveFileDialog.RestoreDirectory = true;
@@ -811,6 +938,7 @@ namespace MeetingBoard.View
                 }   
                 if(ws.getWorkspaceFullPath()!="")
                 {
+                    SaveToWorkspaceModel();
                     successfullOperation = (SaveWorkspaceConfig() && SaveWorkspaceStrokes());
                 }                       
             }
@@ -947,6 +1075,43 @@ namespace MeetingBoard.View
         private void cmdToolbox_Unchecked(object sender, RoutedEventArgs e)
         {
             toolbox.Hide();
+        }
+
+        //TEST
+        /*private void cmdHandCursor_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Cursor != System.Windows.Input.Cursors.Wait)
+            {
+                _activeCanvas.EditingMode = InkCanvasEditingMode.Select;
+                _activeCanvas.UseCustomCursor = true;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
+            }
+        }
+
+        private void cmdArrowCursor_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.Cursor != System.Windows.Input.Cursors.Wait)
+            {
+                GoalsCanvas.UseCustomCursor = true;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+            }
+                
+        }*/
+
+        private void cmdZoomIn_Click(object sender, RoutedEventArgs e)
+        {                     
+            st.ScaleX *= ScaleRate;
+            st.ScaleY *= ScaleRate;
+            _activeCanvas.RenderTransform = st;
+            _activeBorder.RenderTransform = st;
+        }
+
+        private void cmdZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            st.ScaleX /= ScaleRate;          
+            st.ScaleY /= ScaleRate;
+            _activeCanvas.RenderTransform = st;
+            _activeBorder.RenderTransform = st;
         }
     }
 }

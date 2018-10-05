@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SESSIONS>
+  <SESSION ID="20180926004639256">
+    <TIMING>
+      <CANVAS NAME="demo_Goals" TIME="(00:00:03)" />
+      <CANVAS NAME="demo_Essence" TIME="(00:00:00)" />
+      <CANVAS NAME="demo_Constraints" TIME="(00:00:00)" />
+      <CANVAS NAME="demo_Alternatives" TIME="(00:00:00)" />
+      <CANVAS NAME="demo_Assumptions" TIME="(00:00:00)" />
+      <CANVAS NAME="demo_ImportantDecisions" TIME="(00:00:00)" />
+    </TIMING>
+  </SESSION>
+</SESSIONS>

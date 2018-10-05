@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Images\MeetingBoard.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -177,6 +180,15 @@
     <Resource Include="Images\WSHighlighter.png" />
     <Resource Include="Images\WSPencil.png" />
     <Resource Include="Images\WSSelect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WSZoomIn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WSZoomOut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MeetingBoard.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

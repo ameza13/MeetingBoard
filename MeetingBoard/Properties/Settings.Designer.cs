@@ -49,7 +49,7 @@ namespace MeetingBoard.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1024")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double workingAreaWidth {
             get {
                 return ((double)(this["workingAreaWidth"]));
