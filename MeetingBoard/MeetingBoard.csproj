@@ -190,6 +190,16 @@
   <ItemGroup>
     <Resource Include="Images\MeetingBoard.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\meetingboard-icons\erase-all.png" />
+    <Resource Include="Images\meetingboard-icons\erase-stroke.png" />
+    <Resource Include="Images\meetingboard-icons\erase.png" />
+    <Resource Include="Images\meetingboard-icons\pencil-settings.png" />
+    <Resource Include="Images\meetingboard-icons\pencil.png" />
+    <Resource Include="Images\meetingboard-icons\select.png" />
+    <Resource Include="Images\meetingboard-icons\zoom-in.png" />
+    <Resource Include="Images\meetingboard-icons\zoom-out.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
