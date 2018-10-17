@@ -62,6 +62,7 @@ namespace MeetingBoard.View
             SetUpStopWatches();
             _initDrawingAttributes();
 
+          
         }
 
         private void _initDrawingAttributes()
@@ -461,6 +462,11 @@ namespace MeetingBoard.View
                 _undoStack.Push(new KeyValuePair<Stroke, int>(e.Stroke, 1));
                 _viewModel.activeCanvas.RefreshThumbnail();
             }*/
+            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+            Debug.WriteLine("size of canvas is:" + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+            Debug.WriteLine("");
+            
+
         }
 
         private void inkCanvas_StrokeErasing(object sender, InkCanvasStrokeErasingEventArgs e)
@@ -480,6 +486,7 @@ namespace MeetingBoard.View
         //TO REFACTOR: Move to a util unit
         private bool SaveWorkspaceStrokes()
         {
+            
             bool successfulOperation = false;       
             string workspaceFullPath = ""; //TO REFACTOR: Change for default workspace location
             try
@@ -1025,6 +1032,7 @@ namespace MeetingBoard.View
             _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
             _activeCanvas.DefaultDrawingAttributes = _penSettings;
             Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+            Console.WriteLine("here");
         }
 
         private void cmdErase_Click(object sender, RoutedEventArgs e)
@@ -1057,6 +1065,10 @@ namespace MeetingBoard.View
         {
             //TO DO
             Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+           // StrokeCollection all_strokes;
+            // all_strokes = _activeCanvas.Strokes;
+            // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.inkcanvas.strokes?view=netframework-4.7.2
+            //https://edi.wang/post/2017/7/25/uwp-ink-undo-redo
         }
 
         private void cmdRedo_Click(object sender, RoutedEventArgs e)
@@ -1104,14 +1116,41 @@ namespace MeetingBoard.View
             st.ScaleY *= ScaleRate;
             _activeCanvas.RenderTransform = st;
             _activeBorder.RenderTransform = st;
+
+            int expand_scale = 30;
+
+            double current_height = _activeCanvas.ActualHeight;
+            double update_height = current_height + expand_scale;
+
+            double current_width = _activeCanvas.ActualWidth;
+            double update_width = current_width + expand_scale;
+
+
+            Debug.WriteLine("zoom in clicked " + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+            _activeCanvas.Height = update_height;
+            _activeCanvas.Width = update_width;
+
+            Debug.WriteLine("zoom in clicked " + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+
+
+
         }
 
         private void cmdZoomOut_Click(object sender, RoutedEventArgs e)
         {
+         
             st.ScaleX /= ScaleRate;          
             st.ScaleY /= ScaleRate;
             _activeCanvas.RenderTransform = st;
             _activeBorder.RenderTransform = st;
+
+
+            Debug.WriteLine("zoom out clicked" + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+        }
+
+        private void debugging(object sender, RoutedEventArgs e)
+        {
+            //Debug.WritecLine();
         }
     }
 }
