@@ -11,13 +11,14 @@
         Title="MeetingBoard" Height="1024" Width="1280"
         WindowState="Maximized" Closed="Window_Closed">
     <Grid x:Name="MenuGrid" Background="WhiteSmoke">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DockPanel Background="WhiteSmoke"  Grid.Row="0">
+        <DockPanel Background="WhiteSmoke"  Grid.Row="0" Grid.ColumnSpan="2" >
             <Menu DockPanel.Dock="Top" >
-                <MenuItem Header="My Workspace" Foreground="DarkBlue" FontSize="16" >
+                <MenuItem Header="My Workspace" Foreground="#38367d" FontSize="16" >
                     <MenuItem Name="miNew" Header="New" Click="New_Click" FontSize="14" />
                     <MenuItem Name="miOpen" Header="Open" Click="Open_Click" FontSize="14" />
                     <MenuItem Name="miClose" Header="Close" Click="Close_Click" FontSize="14"  IsEnabled="False"/>
@@ -27,7 +28,7 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1" Visibility="Hidden">
+        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
@@ -40,22 +41,22 @@
                     <Image Source="..\Images\Done.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button-->
                 <Button x:Name="cmdDraw" Click="cmdDraw_Click" Margin="5" ToolTip="Draw" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSPencil.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\pencil.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality" Height="32" Width="32"/>
                 </Button>
                 <ToggleButton x:Name="cmdToolbox" Checked="cmdToolbox_Checked" Unchecked="cmdToolbox_Unchecked" Margin="5" ToolTip="Pen Settings" Background="WhiteSmoke">
-                    <Image Source="..\Images\Toolbox.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\pencil-settings.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </ToggleButton>
                 <Button x:Name="cmdErase" Click="cmdErase_Click" Margin="5" ToolTip="Erase" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSErase.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\erase.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
                 <Button x:Name="cmdEraseStroke" Click="cmdEraseStroke_Click" Margin="5" ToolTip="Erase a stroke" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSEraseStroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\erase-stroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
                 <Button x:Name="cmdClearAll" Click="cmdClearAll_Click" Margin="5" ToolTip="Erase all" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSEraseStroke.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\erase-all.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
                 <Button x:Name="cmdSelect" Click="cmdSelect_Click" Margin="5" ToolTip="Select area" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSSelect.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\select.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
                 <!--Button x:Name="cmdUndo" Click="cmdUndo_Click" Margin="5" ToolTip="Undo" Background="WhiteSmoke">
                     <Image Source="..\Images\Undo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -64,10 +65,16 @@
                     <Image Source="..\Images\Redo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality" />
                 </Button-->
                 <Button x:Name="cmdZoomIn" Click="cmdZoomIn_Click" Margin="5" ToolTip="Zoom In" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSZoomIn.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\zoom-in.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
                 <Button x:Name="cmdZoomOut" Click="cmdZoomOut_Click" Margin="5" ToolTip="Zoom Out" Background="WhiteSmoke">
-                    <Image Source="..\Images\WSZoomOut.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="..\Images\meetingboard-icons\zoom-out.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdUndo" Click="cmdUndo_Click" Margin="5" ToolTip="Undo" Background="WhiteSmoke">
+                    <Image Source="..\Images\meetingboard-icons\undo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+                <Button x:Name="cmdRedo" Click="cmdRedo_Click" Margin="5" ToolTip="Redo" Background="WhiteSmoke">
+                    <Image Source="..\Images\meetingboard-icons\redo.png" Opacity="0.9" Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
 
             </WrapPanel>
@@ -101,55 +108,63 @@
                     <TabItem x:Name="TabGoals">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Goals " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Text="Goals " Foreground="#38367d" FontWeight="Bold"/>
                                 <TextBlock Name="GoalsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" 
-			                            HorizontalScrollBarVisibility="Auto"
-			                            HorizontalAlignment="Stretch"
-			                            VerticalAlignment="Stretch">
+			                          HorizontalScrollBarVisibility="Auto" 
+                                     HorizontalAlignment="Stretch"
+			                         VerticalAlignment="Stretch" >
+
                             <Grid x:Name="GoalsGrid" DataContext="" Background="WhiteSmoke">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="15"/>
+                                    <RowDefinition Height="25"/>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="15"/>
+                                    <RowDefinition Height="25"/>
                                 </Grid.RowDefinitions>
+
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition Width="25"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="15"/>
+                                    <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Sibling border to add shadow -->
-                                <Border x:Name="GoalsBorder" Grid.Row="1" Grid.Column="1" 
+                                <Border x:Name="GoalsBorder" Grid.Row="1" Grid.Column="1"
 					            HorizontalAlignment="Stretch"
 					            VerticalAlignment="Stretch"
 					            BorderBrush="DarkGray"
-					            BorderThickness="3">
+					            BorderThickness="3" >
                                     <Border.Effect>
                                         <DropShadowEffect Color="DarkGray"/>
                                     </Border.Effect>
                                 </Border>
-                                <InkCanvas x:Name="GoalsCanvas" 
+
+                                <InkCanvas x:Name="GoalsCanvas"   
                                    Grid.Row="1"
-                                   Grid.Column="1"                             
+                                   Grid.Column="1"
 					               SelectionChanged="inkCanvas_SelectionChanged" 
 					               StrokeCollected="inkCanvas_StrokeCollected" 
 					               StrokeErasing="inkCanvas_StrokeErasing"
 					               SelectionMoved="inkCanvas_SelectionMoved"      
                                    MouseUp="GoalsCanvas_MouseUp"       
 					               HorizontalAlignment="Stretch"
-					               VerticalAlignment="Stretch">
+					               VerticalAlignment="Stretch" >
                                     <Label x:Name="lblGoals" Margin="50" Content="What do we want to accomplish in today's design meeting?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
+
+
                                 </InkCanvas>
                             </Grid>
+
                         </ScrollViewer>
+                
+
                     </TabItem>
                     <TabItem x:Name="TabEssence">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Essence " Foreground="DarkBlue" FontWeight="Bold" />
+                                <TextBlock Text="Essence " Foreground="#38367d" FontWeight="Bold" />
                                 <TextBlock Name="EssenceCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -197,7 +212,7 @@
                     <TabItem x:Name="TabConstraints">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Constraints " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Text="Constraints " Foreground="#38367d" FontWeight="Bold"/>
                                 <TextBlock Name="ConstraintsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -244,7 +259,7 @@
                     <TabItem x:Name="TabAssumptions" >
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Assumptions " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Text="Assumptions " Foreground="#38367d" FontWeight="Bold"/>
                                 <TextBlock Name="AssumptionsCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -291,7 +306,7 @@
                     <TabItem x:Name="TabAlternatives">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Alternatives " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Text="Alternatives " Foreground="#38367d" FontWeight="Bold"/>
                                 <TextBlock Name="AlternativesCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -338,7 +353,7 @@
                     <TabItem x:Name="TabImpDec" >
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Decisions " Foreground="DarkBlue" FontWeight="Bold"/>
+                                <TextBlock Text="Decisions " Foreground="#38367d" FontWeight="Bold"/>
                                 <TextBlock Name="ImpDecCurrentElapsedTimeDisplay" Text="(00:00:00)" Foreground="DarkGray"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -378,7 +393,7 @@
 					               HorizontalAlignment="Stretch"
 					               VerticalAlignment="Stretch" >
                                     <Label x:Name="lblImpDec" Margin="50" Content=" What are the key choices that we made?" FontSize="24" Foreground="DarkGray" FontStyle="Italic" FontFamily="Times New Roman"/>
-                                </InkCanvas> 
+                                </InkCanvas>
                             </Grid>
                         </ScrollViewer>
                     </TabItem>

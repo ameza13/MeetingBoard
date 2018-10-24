@@ -41,14 +41,18 @@ namespace MeetingBoard.View
         Stopwatch swActItems = new Stopwatch();
         Stopwatch swActive;
 
+
+
         InkCanvas _activeCanvas;
         Border _activeBorder;
-
         DrawingAttributes _penSettings = new DrawingAttributes();
         DrawingAttributes _highlighterSettings = new DrawingAttributes();
 
         ScaleTransform st = new ScaleTransform();
         const double ScaleRate = 1.1;
+
+        StrokeCollection redo = new StrokeCollection();
+        StrokeCollection all_strokes = new StrokeCollection();
 
         public MeetingBoardMain()
         {
@@ -388,6 +392,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.GoalsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     case "TabEssence":
                         StartWatch(dtEssence, swEssence);
@@ -395,6 +400,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.EssenceBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     case "TabConstraints":
                         StartWatch(dtConstraints, swConstraints);
@@ -402,6 +408,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.ConstraintsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     case "TabAlternatives":
                         StartWatch(dtAlternatives, swAlternatives);
@@ -409,6 +416,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.AlternativesBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     case "TabAssumptions":
                         StartWatch(dtAssumptions, swAssumptions);
@@ -416,6 +424,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.AssumptionsBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     case "TabImpDec":
                         StartWatch(dtImpDec, swImpDec);
@@ -423,6 +432,7 @@ namespace MeetingBoard.View
                         _activeBorder = this.ImpDecBorder;
                         Debug.WriteLine("Active canvas changing to: " + _activeCanvas.Name);
                         toolbox.ActiveCanvas = _activeCanvas;
+                        redo = new StrokeCollection();
                         break;
                     /*case "TabActionItems":
                         StartWatch(dtActItems, swActItems);
@@ -465,6 +475,7 @@ namespace MeetingBoard.View
             Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
             Debug.WriteLine("size of canvas is:" + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
             Debug.WriteLine("");
+            redo = new StrokeCollection();
             
 
         }
@@ -985,6 +996,8 @@ namespace MeetingBoard.View
             {
                 lblGoals.Visibility = Visibility.Hidden;
             }
+          
+            
         }
 
         private void EssenceCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -993,6 +1006,7 @@ namespace MeetingBoard.View
             {
                 lblEssence.Visibility = Visibility.Hidden;
             }
+          
         }
 
         private void ConstraintsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1001,6 +1015,7 @@ namespace MeetingBoard.View
             {
                 lblConstraints.Visibility = Visibility.Hidden;
             }
+          
         }
 
         private void AssumptionsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1009,6 +1024,7 @@ namespace MeetingBoard.View
             {
                 lblAssumptions.Visibility = Visibility.Hidden;
             }
+            
         }
 
         private void AlternativesCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1016,7 +1032,9 @@ namespace MeetingBoard.View
             if (lblAlternatives.Visibility != Visibility.Hidden)
             {
                 lblAlternatives.Visibility = Visibility.Hidden;
+      
             }
+          
         }
 
         private void ImpDecCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1031,8 +1049,9 @@ namespace MeetingBoard.View
         {
             _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
             _activeCanvas.DefaultDrawingAttributes = _penSettings;
-            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
-            Console.WriteLine("here");
+         
+           
+
         }
 
         private void cmdErase_Click(object sender, RoutedEventArgs e)
@@ -1065,8 +1084,21 @@ namespace MeetingBoard.View
         {
             //TO DO
             Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
-           // StrokeCollection all_strokes;
-            // all_strokes = _activeCanvas.Strokes;
+            all_strokes = _activeCanvas.Strokes;
+            int length_of_strokes = all_strokes.Count;
+
+            if (length_of_strokes > 0)
+            {
+                Debug.WriteLine(all_strokes + " " + length_of_strokes);
+                Debug.WriteLine(all_strokes[length_of_strokes - 1]);
+                redo.Insert(redo.Count, all_strokes[length_of_strokes - 1]);
+                all_strokes.RemoveAt(length_of_strokes - 1);
+        
+            }
+
+          
+
+
             // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.inkcanvas.strokes?view=netframework-4.7.2
             //https://edi.wang/post/2017/7/25/uwp-ink-undo-redo
         }
@@ -1074,7 +1106,15 @@ namespace MeetingBoard.View
         private void cmdRedo_Click(object sender, RoutedEventArgs e)
         {
             //TO DO
-            Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+            if(redo.Count > 0)
+            {
+                Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+                all_strokes.Insert(all_strokes.Count, redo[redo.Count - 1]);
+                redo.RemoveAt(redo.Count - 1);
+            }
+            
+
+
         }
 
         private void cmdToolbox_Checked(object sender, RoutedEventArgs e)
@@ -1126,11 +1166,11 @@ namespace MeetingBoard.View
             double update_width = current_width + expand_scale;
 
 
-            Debug.WriteLine("zoom in clicked " + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+          
             _activeCanvas.Height = update_height;
             _activeCanvas.Width = update_width;
 
-            Debug.WriteLine("zoom in clicked " + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
+          
 
 
 
