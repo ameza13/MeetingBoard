@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using System.Windows.Ink;
 using MeetingBoard.Model;
+using System.Reflection;
 
 namespace MeetingBoard.View
 {
@@ -53,6 +54,18 @@ namespace MeetingBoard.View
 
         StrokeCollection redo = new StrokeCollection();
         StrokeCollection all_strokes = new StrokeCollection();
+
+
+        int goal_count = 0;
+        int essence_count = 0;
+        int assumptions_count = 0;
+        int alternatives_count = 0;
+        int constraints_count = 0;
+        int impDec_count = 0;
+
+        bool isNew = false;
+
+
 
         public MeetingBoardMain()
         {
@@ -121,15 +134,59 @@ namespace MeetingBoard.View
                     StopAllWatches();                
                     ws.ResetWorkspace(); //Reset timing?
                     ClearAllCanvas();
+
                     if(SaveWorkspace()) 
                     {
-                        lblGoals.Visibility = Visibility.Visible;
+                        /*lblGoals.Visibility = Visibility.Visible;
                         lblEssence.Visibility = Visibility.Visible;
                         lblAssumptions.Visibility = Visibility.Visible;
                         lblConstraints.Visibility = Visibility.Visible;
                         lblAlternatives.Visibility = Visibility.Visible;
-                        lblImpDec.Visibility = Visibility.Visible;
-                                              
+                        lblImpDec.Visibility = Visibility.Visible;*/
+
+                        //TO DO!
+                        StrokeCollection goal_temp = null; 
+                        StrokeCollection essence_temp = null;
+                        StrokeCollection assumptions_temp = null;
+                        StrokeCollection alternatives_temp = null;
+                        StrokeCollection constraints_temp = null;
+                        StrokeCollection impDec_temp = null;
+
+                        isNew = true;
+
+                        string[] Documents = System.IO.Directory.GetFiles("../../templates/");
+                     
+
+            
+                        string goals_file_path = Documents[4];
+                        string essence_file_path = Documents[3];
+                        string assumptions_file_path = Documents[1];
+                        string alternatives_file_path = Documents[0];
+                        string constraints_file_path = Documents[2];
+                        string impDec_file_path = Documents[5];
+
+                 
+
+
+                        goal_temp = UpdateStrokeInWorkspaceModel(goals_file_path, "GoalsCanvas");
+                        essence_temp = UpdateStrokeInWorkspaceModel(essence_file_path, "EssenceCanvas");
+                        assumptions_temp = UpdateStrokeInWorkspaceModel(assumptions_file_path, "AssumptionsCanvas");
+                        alternatives_temp = UpdateStrokeInWorkspaceModel(alternatives_file_path, "AlternativesCanvas");
+                        constraints_temp = UpdateStrokeInWorkspaceModel(constraints_file_path, "ConstraintsCanvas");
+                        impDec_temp = UpdateStrokeInWorkspaceModel(impDec_file_path, "ImpDecCanvas");
+
+             
+
+                        GoalsCanvas.Strokes = goal_temp;
+                        EssenceCanvas.Strokes = essence_temp;
+                        AssumptionsCanvas.Strokes = assumptions_temp;
+                        AlternativesCanvas.Strokes = alternatives_temp;
+                        ConstraintsCanvas.Strokes = constraints_temp;
+                        ImpDecCanvas.Strokes = impDec_temp;
+
+             
+
+
                         MainGrid.Visibility = Visibility.Visible;
                         ResetAllWatches();
 
@@ -146,6 +203,8 @@ namespace MeetingBoard.View
                         //miSave.IsEnabled = true;
                         miSaveAll.IsEnabled = true;
                     }
+              
+
                     break;
                 case 2://Open Workspace
                     StopAllWatches();
@@ -473,8 +532,12 @@ namespace MeetingBoard.View
                 _viewModel.activeCanvas.RefreshThumbnail();
             }*/
             Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
-            Debug.WriteLine("size of canvas is:" + _activeCanvas.ActualHeight + " " + _activeCanvas.ActualWidth);
-            Debug.WriteLine("");
+          
+        
+
+
+
+
             redo = new StrokeCollection();
             
 
@@ -515,7 +578,9 @@ namespace MeetingBoard.View
             {
 
             }
+            Debug.WriteLine(all_strokes);
             return successfulOperation;
+            //Debug.WriteLine(all_strokes);
         }
 
         //TO DO: Move to a util unit
@@ -803,6 +868,7 @@ namespace MeetingBoard.View
                 {
                     Debug.WriteLine(entry.Key);
                     strokes = UpdateStrokeInWorkspaceModel(ws.getWorkspacePath() + "\\" + entry.Key + ".isf", entry.Key);
+                    Debug.WriteLine(ws.getWorkspacePath() + "\\" + entry.Key + ".isf");
                     if (strokes != null)
                     {
                         entry.Value.Strokes = strokes;
@@ -835,6 +901,9 @@ namespace MeetingBoard.View
 
         }
 
+      
+
+
         private bool OpenWorkspace()
         {
             bool successfullOperation = false;
@@ -859,8 +928,8 @@ namespace MeetingBoard.View
 
                         if (fullFilePath != "")
                         {
-                            workspaceName = System.IO.Path.GetFileNameWithoutExtension(fullFilePath);
-                            filePath = System.IO.Directory.GetParent(fullFilePath).ToString();
+                            workspaceName = System.IO.Path.GetFileNameWithoutExtension(fullFilePath); // name of the file
+                            filePath = System.IO.Directory.GetParent(fullFilePath).ToString(); // path without name
 
                             //SetUp workspace data
                             ws.ResetWorkspace();
@@ -870,9 +939,9 @@ namespace MeetingBoard.View
                         }
 
                         //Load files
-                        if (ws.getWorkspaceFullPath() != "")
+                        if (ws.getWorkspaceFullPath() != "") // if there is a valid path
                         {
-                            SaveToWorkspaceModel();
+                            SaveToWorkspaceModel(); // dict of sketches (getting info)
                             //TO DO: Read canvas timing
                             ClearAllCanvas();
                             successfullOperation = (LoadConfigFile() && LoadStrokesToWorkspace());
@@ -995,8 +1064,14 @@ namespace MeetingBoard.View
             if (lblGoals.Visibility != Visibility.Hidden)
             {
                 lblGoals.Visibility = Visibility.Hidden;
+            
             }
-          
+
+            if(goal_count == 0 && isNew)
+            {
+                GoalsCanvas.Strokes = new StrokeCollection();
+            }
+            goal_count += 1;
             
         }
 
@@ -1006,7 +1081,13 @@ namespace MeetingBoard.View
             {
                 lblEssence.Visibility = Visibility.Hidden;
             }
-          
+
+            if (essence_count == 0 && isNew)
+            {
+               EssenceCanvas.Strokes = new StrokeCollection();
+            }
+            essence_count += 1;
+
         }
 
         private void ConstraintsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1015,7 +1096,11 @@ namespace MeetingBoard.View
             {
                 lblConstraints.Visibility = Visibility.Hidden;
             }
-          
+            if(constraints_count == 0 && isNew)
+            {
+                ConstraintsCanvas.Strokes = new StrokeCollection();
+            }
+            constraints_count += 1;
         }
 
         private void AssumptionsCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -1024,6 +1109,11 @@ namespace MeetingBoard.View
             {
                 lblAssumptions.Visibility = Visibility.Hidden;
             }
+            if(assumptions_count == 0 && isNew)
+            {
+                AssumptionsCanvas.Strokes = new StrokeCollection();
+            }
+            assumptions_count += 1;
             
         }
 
@@ -1034,6 +1124,11 @@ namespace MeetingBoard.View
                 lblAlternatives.Visibility = Visibility.Hidden;
       
             }
+            if (alternatives_count == 0 && isNew)
+            {
+                AlternativesCanvas.Strokes = new StrokeCollection();
+            }
+            alternatives_count += 1;
           
         }
 
@@ -1043,14 +1138,22 @@ namespace MeetingBoard.View
             {
                 lblImpDec.Visibility = Visibility.Hidden;
             }
+            if(impDec_count == 0 && isNew)
+            {
+                ImpDecCanvas.Strokes = new StrokeCollection();
+            }
+            impDec_count += 1;
         }
 
         private void cmdDraw_Click(object sender, RoutedEventArgs e)
         {
             _activeCanvas.EditingMode = InkCanvasEditingMode.Ink;
             _activeCanvas.DefaultDrawingAttributes = _penSettings;
-         
-           
+           // string filepath= "..\templates\first_temp_Goals.isf";
+            
+
+
+
 
         }
 
@@ -1109,6 +1212,7 @@ namespace MeetingBoard.View
             if(redo.Count > 0)
             {
                 Debug.WriteLine("Active canvas is:" + _activeCanvas.Name);
+                Debug.WriteLine(all_strokes);
                 all_strokes.Insert(all_strokes.Count, redo[redo.Count - 1]);
                 redo.RemoveAt(redo.Count - 1);
             }

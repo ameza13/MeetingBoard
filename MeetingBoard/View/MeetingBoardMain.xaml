@@ -28,7 +28,7 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1" Visibility="Visible">
+        <Grid x:Name="MainGrid" Background="WhiteSmoke" Grid.Row="1" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
