@@ -184,6 +184,8 @@ namespace MeetingBoard.View
                         ConstraintsCanvas.Strokes = constraints_temp;
                         ImpDecCanvas.Strokes = impDec_temp;
 
+                        //AlternativesCanvas.ResizeEnabled = true;  
+                        // the above line maks it so that drawing on edges grows the canvas
              
 
 
@@ -1126,7 +1128,14 @@ namespace MeetingBoard.View
             }
             if (alternatives_count == 0 && isNew)
             {
-                AlternativesCanvas.Strokes = new StrokeCollection();
+                int remove_index = 34;
+
+                while(AlternativesCanvas.Strokes.Count > remove_index)
+                {
+                    AlternativesCanvas.Strokes.RemoveAt(AlternativesCanvas.Strokes.Count - 1);
+                }
+
+               
             }
             alternatives_count += 1;
           
